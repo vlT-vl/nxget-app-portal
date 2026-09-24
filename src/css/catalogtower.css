@@ -1,0 +1,66 @@
+/* catalogtower.css                                                          */
+/*****************************************************************************/
+
+.catalog-tower {
+  display: block;
+  width: 100%;
+}
+
+.catalog-tower svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.catalog-entry {
+  transform-box: fill-box;
+  animation: catalogEntryIn 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.catalog-entry-0 { animation-delay: 0s; }
+.catalog-entry-1 { animation-delay: 0.3s; }
+.catalog-entry-2 { animation-delay: 0.6s; }
+.catalog-entry-3 { animation-delay: 0.9s; }
+.catalog-entry-4 { animation-delay: 1.2s; }
+.catalog-entry-5 { animation-delay: 1.5s; }
+.catalog-entry-6 { animation-delay: 1.8s; }
+.catalog-entry-7 { animation-delay: 2.1s; }
+
+@keyframes catalogEntryIn {
+  from { opacity: 0; transform: translateY(-28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Idle: i due fasci di "pioggia" respirano piano una volta finito l'ingresso */
+.catalog-entry-4,
+.catalog-entry-6 {
+  animation-name: catalogEntryIn, catalogRainPulse;
+  animation-duration: 1s, 3.4s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1), ease-in-out;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: both, both;
+}
+.catalog-entry-4 { animation-delay: 1.2s, var(--idle-start, 3.3s); }
+.catalog-entry-6 { animation-delay: 1.8s, calc(var(--idle-start, 3.3s) + 0.6s); }
+
+@keyframes catalogRainPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Idle: il bagliore sul coperchio dei due cubi scuri pulsa piano, come un battito */
+.catalog-entry-3 > :last-child,
+.catalog-entry-5 > :last-child {
+  animation: catalogGlowPulse 2.6s ease-in-out var(--idle-start, 3.3s) infinite;
+}
+
+@keyframes catalogGlowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-entry { animation: none; }
+  .catalog-entry-4, .catalog-entry-6 { animation: none; }
+  .catalog-entry-3 > :last-child, .catalog-entry-5 > :last-child { animation: none; }
+}

@@ -1,0 +1,145 @@
+/* navbar.css                                                                */
+/*****************************************************************************/
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem var(--pad);
+  background: var(--bg-elevated-2);
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.35s ease;
+}
+
+/* Sotto lo splash d'ingresso della Home: resta al suo posto (niente salti
+   di layout, la navbar è sticky) ma invisibile finché non finisce. */
+.navbar--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navbar-logo {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  animation: fadeInDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+}
+
+.nav-links li {
+  animation: fadeInDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(60ms + var(--i, 0) * 60ms);
+}
+
+.nav-links li:nth-child(1) { --i: 1; }
+.nav-links li:nth-child(2) { --i: 2; }
+.nav-links li:nth-child(3) { --i: 3; }
+.nav-links li:nth-child(4) { --i: 4; }
+
+.nav-btn {
+  background: none;
+  border: none;
+  padding: 0.2rem 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.nav-btn:hover { color: var(--text); }
+.nav-btn:hover::after { width: 100%; }
+
+.nav-btn--active {
+  color: var(--text);
+}
+
+.nav-btn--active::after {
+  width: 100%;
+}
+
+.navbar-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: fadeInDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.navbar-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navbar-social-btn:hover {
+  color: var(--text);
+}
+
+@media (max-width: 860px) {
+  .nav-links { gap: 1.5rem; }
+  .nav-btn   { font-size: 0.7rem; }
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 0.7rem var(--pad) 0;
+    gap: 0;
+  }
+
+  .navbar-logo   { order: 1; }
+  .navbar-socials { order: 2; gap: 0.6rem; }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: 0;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar { display: none; }
+
+  .nav-btn {
+    font-size: 0.58rem;
+    padding: 0.35rem 0.1rem;
+    letter-spacing: 0.5px;
+  }
+
+  .navbar-social-btn { font-size: 0.95rem; }
+}

@@ -1,0 +1,63 @@
+/* nxgetlogo.css — variante animata del logo (icona a onda + scritta "battuta")*/
+/*****************************************************************************/
+
+.nxget-logo--animated .nxget-wave {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.4);
+  animation: nxgetWaveIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.nxget-logo--animated .nxget-wave-0 { animation-delay: 0s; }
+.nxget-logo--animated .nxget-wave-1 { animation-delay: 0.045s; }
+.nxget-logo--animated .nxget-wave-2 { animation-delay: 0.09s; }
+.nxget-logo--animated .nxget-wave-3 { animation-delay: 0.135s; }
+.nxget-logo--animated .nxget-wave-4 { animation-delay: 0.18s; }
+.nxget-logo--animated .nxget-wave-5 { animation-delay: 0.225s; }
+.nxget-logo--animated .nxget-wave-6 { animation-delay: 0.27s; }
+.nxget-logo--animated .nxget-wave-7 { animation-delay: 0.315s; }
+.nxget-logo--animated .nxget-wave-8 { animation-delay: 0.36s; }
+.nxget-logo--animated .nxget-wave-9 { animation-delay: 0.405s; }
+
+@keyframes nxgetWaveIn {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.nxget-logo--animated .nxget-type-wrap {
+  clip-path: inset(0 100% 0 0);
+  animation: nxgetType 0.7s steps(10, end) 0.95s both;
+}
+
+@keyframes nxgetType {
+  to { clip-path: inset(0 0% 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nxget-logo--animated .nxget-wave { animation: none; }
+  .nxget-logo--animated .nxget-type-wrap { animation: none; clip-path: none; }
+}
+
+/* Variante impilata: icona sopra, scritta sotto, dimensionate una
+   indipendentemente dall'altra invece che come un unico blocco fuso — la
+   scritta più piccola dell'icona, non alla pari. */
+.nxget-logo--stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.nxget-logo-icon svg {
+  display: block;
+  height: clamp(3.5rem, 10vw, 6rem);
+  width: auto;
+}
+
+.nxget-logo-word svg {
+  display: block;
+  height: clamp(1.3rem, 3.6vw, 2.1rem);
+  width: auto;
+  color: var(--soft-fill);
+}

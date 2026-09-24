@@ -1,0 +1,11 @@
+Every project has an origin story. nxget's begins in 2020, with a Windows package manager called AppGet.
+
+AppGet was the work of one developer, Keivan Beigi — fast, well designed, and years ahead of what Windows itself offered for installing software from a terminal. In 2019, Microsoft reached out to him, expressed interest in his work, and then went quiet. Six months later, in May 2020, the company shipped its own Windows Package Manager, WinGet, built on mechanics, terminology and a manifest format strikingly close to AppGet's own — without giving him credit. Beigi shut AppGet down not long after, and wrote about what happened on his personal blog.
+
+That story stayed with us. In 2022, it became the spark for a small internal project at vlT: a custom command-line package manager for installing software on Windows, built out of curiosity for what AppGet had set out to do, and admiration for the idea behind it.
+
+That first experiment never left the workshop, but the idea kept growing. nxget is what it became: a cross-platform hub for discovering and downloading software, and the starting point for a cross-platform CLI of its own — one meant to install apps and content across operating systems, not just Windows.
+
+nxget isn't a clone of AppGet, and it isn't trying to rewrite what happened to it. It's simply a reminder that a good idea, even one cut short, doesn't have to end there.
+
+AppGet, its name, and all associated intellectual property remain the sole property of Keivan Beigi. nxget is not affiliated with AppGet in any way — this page exists only to credit the idea that inspired us.

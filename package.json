@@ -1,0 +1,26 @@
+{
+  "name": "nxget",
+  "version": "0.1.0",
+  "build": "R240926",
+  "updated": "24 September 2026",
+  "ibuild": "R110926",
+  "description": "nxget app portal",
+  "author": "Veronesi Lorenzo © 2026 vlT - vl.TECH",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-icons": "^5.7.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.0"
+  }
+}

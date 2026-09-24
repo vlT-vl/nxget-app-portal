@@ -1,0 +1,85 @@
+Proprietary Source-Available License
+Copyright (c) 2025–2026 Veronesi Lorenzo (vlT)
+All rights reserved.
+
+────────────────────────────────────────────────────────────
+
+SCOPE
+
+This license governs the source code of nxget app portal ("the Software").
+It does not grant, and is not required for, ordinary access to the
+publicly hosted web application at its official deployment: the web app
+itself is freely accessible to the public, without any license, account,
+or fee, simply as an end user browsing the site.
+
+────────────────────────────────────────────────────────────
+
+ACCESS TO THE SOURCE CODE
+
+The source code is source-available on request: it may be reviewed and
+studied only with the prior authorization of the copyright holder, granted
+on a case-by-case basis for personal study purposes. Being granted access
+to the source code does not carry any of the rights listed under
+RESTRICTIONS below, and does not constitute a license to use, modify, or
+redistribute it.
+
+────────────────────────────────────────────────────────────
+
+RESTRICTIONS
+
+Regardless of how access to the Software was obtained — as a public user
+of the hosted web app, or as a reviewer authorized to study the source
+code — the following are strictly prohibited without the prior written
+permission of the copyright holder:
+
+1. NO MODIFICATION — The source code may not be modified, adapted,
+   translated, or used as the basis for derivative works, in whole or in
+   part.
+
+2. NO REDISTRIBUTION — The software, whether in source or binary form, may
+   NOT be copied, forked, republished, sublicensed, or repackaged.
+
+3. NO REVERSE ENGINEERING — Reverse engineering, decompilation, disassembly,
+   or any attempt to reconstruct the source code from the deployed web app
+   or from a compiled binary is strictly prohibited, except as required by
+   applicable mandatory law.
+
+4. NO COMMERCIAL EXPLOITATION — The software may NOT be sold, commercialized,
+   incorporated into a commercial product or service, or used to provide a
+   paid service to third parties.
+
+────────────────────────────────────────────────────────────
+
+INTELLECTUAL PROPERTY
+
+All intellectual property rights — including but not limited to copyright,
+trade secrets, know-how, and any applicable patents — remain exclusively
+with Veronesi Lorenzo (vlT). Neither public access to the web app nor
+authorized access to the source code grants any ownership rights of any
+kind. The name, logos, and any associated trade dress of this software
+are the exclusive property of Veronesi Lorenzo (vlT) and may not be used
+without prior written consent.
+
+────────────────────────────────────────────────────────────
+
+DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY —
+WHETHER IN CONTRACT, TORT, OR OTHERWISE — ARISING FROM OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+────────────────────────────────────────────────────────────
+
+GOVERNING LAW
+
+This license is governed by the laws of Italy. Any dispute arising from or
+relating to this license shall be subject to the exclusive jurisdiction of
+the courts of Milan (MI), Italy.
+
+────────────────────────────────────────────────────────────
+
+For licensing inquiries, permission requests, or to request access to the
+source code for study purposes: veronesilorenzo@outlook.com

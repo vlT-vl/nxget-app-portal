@@ -1,0 +1,261 @@
+/* cliview.css                                                               */
+/*****************************************************************************/
+
+.cli-view {
+  padding: clamp(3rem, 7vw, 5rem) var(--pad);
+  text-align: center;
+}
+
+.cli-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cli-head {
+  max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.cli-icon {
+  font-size: 2.4rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cli-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.6rem, 3.6vw, 2.2rem);
+  font-weight: 600;
+  color: var(--text);
+  margin: 0.5rem 0 1rem;
+  animation: fadeInUp 0.55s ease 0.08s both;
+}
+
+.cli-text {
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+  animation: fadeInUp 0.55s ease 0.16s both;
+}
+
+.cli-text:last-child {
+  margin-bottom: 0;
+}
+
+.cli-roadmap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.1rem;
+  width: 100%;
+  margin-bottom: 2.5rem;
+}
+
+.cli-roadmap-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem 1.2rem;
+  text-align: left;
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(0.2s + var(--i, 0) * 80ms) both;
+}
+
+.cli-roadmap-icon {
+  font-size: 1.4rem;
+  color: var(--accent);
+  margin-bottom: 0.7rem;
+}
+
+.cli-roadmap-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.cli-roadmap-cmd {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--text);
+}
+
+.cli-roadmap-text {
+  font-size: 0.76rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.cli-section {
+  width: 100%;
+  margin-bottom: 2.5rem;
+}
+
+.cli-section-header {
+  margin-bottom: 1.5rem;
+}
+
+.cli-terminal {
+  max-width: 34rem;
+  margin: 1.25rem auto 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-elevated-2);
+  text-align: left;
+}
+
+.cli-terminal-bar {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.cli-terminal-bar span {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.cli-terminal-body {
+  padding: 1rem 1.1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+.cli-terminal-prompt {
+  color: var(--accent);
+  user-select: none;
+}
+
+.cli-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.cli-step,
+.cli-status-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.3rem 1.2rem;
+  text-align: left;
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(0.2s + var(--i, 0) * 80ms) both;
+}
+
+.cli-step-num {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+.cli-why {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem;
+}
+
+.cli-status-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.cli-status-head .cli-roadmap-title {
+  margin-bottom: 0;
+}
+
+.cli-status {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0;
+  margin: 0;
+}
+
+.cli-status-badge {
+  flex-shrink: 0;
+  padding: 0.15rem 0.65rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.cli-status-badge--done {
+  color: hsl(150 55% 38%);
+  border-color: hsl(150 55% 38% / 0.4);
+  background: hsl(150 55% 38% / 0.12);
+}
+
+.cli-status-badge--planned {
+  color: hsl(38 85% 42%);
+  border-color: hsl(38 85% 42% / 0.4);
+  background: hsl(38 85% 42% / 0.12);
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 0.65rem 1.4rem;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+  animation: fadeInUp 0.55s ease 0.45s both;
+}
+
+.cta-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (max-width: 780px) {
+  .cli-roadmap,
+  .cli-steps,
+  .cli-why { grid-template-columns: 1fr; }
+}

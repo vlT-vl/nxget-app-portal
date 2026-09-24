@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny-ps" viewBox="0 0 700 700" width="700" height="700">
+  <title id="title">nxget icon</title>
+  <g transform="translate(-110,-150) scale(20)">
+    <g fill="none" fill-rule="evenodd">
+      <path fill="#B4040B" d="M5.822 29.917l5.742-9.946 5.742 9.946z"/>
+      <path fill="#98020D" d="M5.822 29.917l5.742 9.945 5.742-9.945z"/>
+      <path fill="#C30509" d="M17.306 29.917l5.742 9.945 5.742-9.945z"/>
+      <path fill="#89010E" d="M11.564 19.97l5.742 9.947 5.742-9.946z"/>
+      <path fill="#98020D" d="M17.306 10.025l5.742 9.946 5.742-9.946z"/>
+      <path fill="#98020D" d="M23.048 19.97l5.742 9.947 5.742-9.946zm5.742 9.947l5.742 9.945 5.743-9.945z"/>
+      <path fill="#C30509" d="M11.564 19.97l5.742-9.945 5.742 9.946z"/>
+      <path fill="#B4040B" d="M23.048 19.97l5.742-9.945 5.742 9.946z"/>
+      <path fill="#A6030C" d="M28.79 29.917l5.742-9.946 5.743 9.946z"/>
+      <path fill="#B4040B" d="M23.048 39.862l5.742-9.945 5.742 9.945z"/>
+    </g>
+  </g>
+</svg>

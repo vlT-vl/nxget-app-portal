@@ -1,0 +1,327 @@
+/* voucherpanel.css — voucher disclaimer and request/unlock panel            */
+/*****************************************************************************/
+
+.voucher-disclaimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  max-width: 64rem;
+  margin: 0 auto 1.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid hsl(35 80% 50% / 0.4);
+  border-radius: 10px;
+  background: hsl(35 80% 50% / 0.1);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  text-align: center;
+  animation: fadeInUp 0.5s ease 0.05s both;
+}
+
+.voucher-disclaimer-icon {
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  color: hsl(35 80% 50%);
+}
+
+.voucher-disclaimer-text {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.voucher-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 64rem;
+  margin: 0 auto 1.75rem;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated-2);
+  outline: none;
+  animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.voucher-panel:focus-visible {
+  border-color: var(--accent);
+}
+
+.voucher-slot {
+  overflow: hidden;
+  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.voucher-slot-inner {
+  /* Griglia con un'unica cella: durante la transizione pill e pannello
+     sono sovrapposti nello stesso spazio invece di sommarsi in altezza
+     (uno sparisce mentre l'altro compare, non uno dopo l'altro) — evita
+     anche il collasso del margin-bottom del pill che c'era con un div
+     semplice (un contenitore grid/flex contiene sempre i margini dei
+     figli, niente hack aggiuntivo). */
+  display: grid;
+}
+
+.voucher-request-pill {
+  grid-row: 1;
+  grid-column: 1;
+  z-index: 2;
+  align-self: start;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto 1.75rem;
+  padding: 0.65rem 1.4rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--bg-elevated-2);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  animation: fadeInDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.voucher-request-pill:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.voucher-request-pill--exit {
+  z-index: 1;
+  animation: fadeOutUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.voucher-request-icon {
+  font-size: 1.05rem;
+}
+
+.voucher-panel-wrap {
+  grid-row: 1;
+  grid-column: 1;
+  z-index: 2;
+}
+
+.voucher-panel-wrap--exit {
+  z-index: 1;
+  animation: fadeOutDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.voucher-panel-dismiss {
+  flex-shrink: 0;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: none;
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.voucher-panel-dismiss:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.voucher-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.voucher-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.voucher-title-icon {
+  color: var(--accent);
+}
+
+.voucher-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.voucher-redeem {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+}
+
+.voucher-hint {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.voucher-contact {
+  color: var(--text);
+  font-weight: 600;
+  user-select: all;
+}
+
+.voucher-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.voucher-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.voucher-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.voucher-input:focus {
+  border-color: var(--accent);
+}
+
+.voucher-input::placeholder {
+  color: var(--text-dim);
+}
+
+.voucher-input--code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.78rem;
+}
+
+.voucher-btn {
+  flex-shrink: 0;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+}
+
+.voucher-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.voucher-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.voucher-btn--primary {
+  align-self: flex-start;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.voucher-btn--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.voucher-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.4rem 1rem 1.1rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.voucher-code-text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.1rem;
+  width: 100%;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: clamp(1.05rem, 3.4vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--text);
+  user-select: all;
+}
+
+.voucher-copy {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated-2);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.voucher-copy:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.voucher-link {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.voucher-link:hover {
+  color: var(--text-muted);
+}
+
+.voucher-error {
+  font-size: 0.78rem;
+  color: var(--accent-hover);
+}
+
+@media (max-width: 480px) {
+  .voucher-panel { padding: 1.1rem 1rem; }
+  .voucher-row { flex-direction: column; }
+  .voucher-code { padding: 1.1rem 0.75rem 0.9rem; }
+  .voucher-btn--primary { align-self: stretch; }
+}

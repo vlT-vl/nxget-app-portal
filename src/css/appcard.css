@@ -1,0 +1,204 @@
+/* appcard.css                                                               */
+/*****************************************************************************/
+
+.app-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.25rem 1.75rem 1.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(min(var(--i, 0), 12) * 60ms) both;
+}
+
+.app-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.35);
+}
+
+.app-card-ext {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.1rem;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+.app-card:hover .app-card-ext {
+  color: var(--text-muted);
+}
+
+.app-logo-wrap {
+  width: 4.75rem;
+  height: 4.75rem;
+  border-radius: 18px;
+  background: var(--bg-elevated-2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+  flex-shrink: 0;
+}
+
+.app-logo {
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: contain;
+}
+
+.app-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: hsl(var(--badge-hue) 70% 40%);
+  background: hsl(var(--badge-hue) 70% 50% / 0.15);
+}
+
+.app-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.app-category {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--tag-hue, 210) 70% 50% / 0.35);
+  background: hsl(var(--tag-hue, 210) 70% 50% / 0.15);
+  color: hsl(var(--tag-hue, 210) 75% 42%);
+  margin-bottom: 0.85rem;
+}
+
+.app-desc {
+  font-size: 0.82rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin-bottom: 1.1rem;
+}
+
+.app-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 1.45rem;
+}
+
+.app-platform-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  animation: fadeInUp 0.35s ease both;
+}
+
+.app-platform-chip-icon {
+  font-size: 0.9em;
+}
+
+/* ── Compact variant — smaller boxes, e.g. "related apps" ── */
+.app-card--compact {
+  padding: 1.25rem 1rem 1.15rem;
+}
+
+.app-card--compact .app-logo-wrap {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px;
+  margin-bottom: 0.65rem;
+}
+
+.app-card--compact .app-logo {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.app-card--compact .app-badge {
+  font-size: 1.05rem;
+}
+
+.app-card--compact .app-name {
+  font-size: 0.85rem;
+  margin-bottom: 0.15rem;
+}
+
+.app-category--vlt {
+  border-color: rgba(255, 59, 48, 0.4);
+  background: var(--vlt-gradient);
+  color: hsl(4 78% 48%);
+}
+
+.app-card--compact .app-category {
+  font-size: 0.62rem;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0;
+}
+
+.app-card--compact .app-card-ext {
+  top: 0.7rem;
+  right: 0.7rem;
+  font-size: 0.8rem;
+}
+
+/* ── Featured variant — smaller than the default card, category-tinted
+   border (translucent, matching the tag pill's own alpha) and platform
+   icons instead of text-only chips ── */
+.app-card--featured {
+  padding: 1.5rem 1.25rem 1.4rem;
+  border-color: hsl(var(--tag-hue, 210) 70% 50% / 0.35);
+}
+
+.app-card--featured-vlt {
+  border-color: rgba(255, 59, 48, 0.4);
+}
+
+.app-card--featured .app-logo-wrap {
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 14px;
+  margin-bottom: 0.9rem;
+}
+
+.app-card--featured .app-logo {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.app-card--featured .app-badge {
+  font-size: 1.3rem;
+}
+
+.app-card--featured .app-name {
+  font-size: 0.95rem;
+}
+
+.app-card--featured .app-category {
+  margin-bottom: 0.8rem;
+}
