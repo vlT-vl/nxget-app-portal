@@ -1,6 +1,3 @@
-/* appsview.css                                                              */
-/*****************************************************************************/
-
 .apps-view {
   position: relative;
   padding: clamp(2.75rem, 6vw, 4rem) var(--pad) clamp(3rem, 6vw, 4.5rem);
@@ -44,9 +41,6 @@ html[data-theme='dark'] .apps-bg {
   user-select: none;
 }
 
-/* Sotto questa soglia il gutter (--pad) è troppo stretto perché le due
-   decorazioni stiano fuori dalla griglia senza finire sotto le card: meglio
-   nasconderle del tutto che mostrarle mezze coperte. */
 @media (max-width: 1700px) {
   .apps-bg, .apps-flow { display: none; }
 }
@@ -54,23 +48,98 @@ html[data-theme='dark'] .apps-bg {
 .apps-page-header {
   text-align: center;
   margin-bottom: 1.75rem;
-  animation: fadeInUp 0.5s ease both;
+}
+
+.apps-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.apps-title-icon {
+  width: 1.3em;
+  height: 1.3em;
+  color: var(--text);
+  overflow: visible;
+}
+
+.apps-page-header--animate .apps-title-text {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease 0.5s forwards;
+}
+
+.apps-page-header--animate .apps-icon-sq {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.apps-page-header--animate .apps-icon-sq-1 {
+  animation: fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+
+.apps-page-header--animate .apps-icon-sq-2 {
+  animation: fadeInLeft 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.22s forwards;
+}
+
+.apps-page-header--animate .apps-icon-sq-3 {
+  animation: fadeInLeft 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.34s forwards;
+}
+
+.apps-page-header--animate .apps-icon-sq-4 {
+  animation: popIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.46s forwards;
+}
+
+.apps-page-header--animate .section-subtitle {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease 0.65s forwards;
+}
+
+.apps-controls {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2.25rem;
+}
+
+.apps-filters {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  animation: fadeInUp 0.55s ease 0.14s both;
+}
+
+.platform-filter {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .apps-search {
   display: flex;
   align-items: center;
-  max-width: 32rem;
-  margin: 0 auto 1.25rem;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
+  gap: 0.5rem;
+  height: 2.6rem;
+  width: 2.6rem;
+  padding: 0 0.7rem;
   border-radius: 999px;
-  padding: 0.3rem 0.3rem 0.3rem 1rem;
-  transition: border-color 0.2s;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: text;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s;
   animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
 }
 
+.apps-search:hover,
 .apps-search:focus-within {
+  width: 18rem;
   border-color: var(--accent);
 }
 
@@ -78,45 +147,51 @@ html[data-theme='dark'] .apps-bg {
   font-size: 1.05rem;
   color: var(--text-dim);
   flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.apps-search:hover .apps-search-icon,
+.apps-search:focus-within .apps-search-icon {
+  color: var(--accent);
 }
 
 .apps-search-input {
   flex: 1;
+  min-width: 0;
   border: none;
   outline: none;
   background: transparent;
   color: var(--text);
   font-size: 0.88rem;
-  padding: 0.55rem 0.7rem;
+  opacity: 0;
+  transform: translateX(12px);
+  transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+}
+
+.apps-search:hover .apps-search-input,
+.apps-search:focus-within .apps-search-input {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .apps-search-input::placeholder {
   color: var(--text-dim);
 }
 
-.apps-filters {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 2.25rem;
-  animation: fadeInUp 0.55s ease 0.14s both;
-}
-
-.platform-filter {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+@media (max-width: 480px) {
+  .apps-search:hover,
+  .apps-search:focus-within {
+    width: 100%;
+  }
 }
 
 .platform-chip {
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid hsl(var(--tag-hue, 210) 35% 60% / 0.3);
+  background: hsl(var(--tag-hue, 210) 35% 60% / 0.18);
+  color: hsl(var(--tag-hue, 210) 35% 50%);
   font-size: 0.75rem;
   font-weight: 500;
   padding: 0.4rem 0.9rem;
@@ -125,14 +200,38 @@ html[data-theme='dark'] .apps-bg {
   transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
 
+.platform-chip-icon {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
 .platform-chip:hover {
+  border-color: hsl(var(--tag-hue, 210) 55% 55% / 0.6);
+}
+
+.platform-chip--active {
+  border-color: hsl(var(--tag-hue, 210) 55% 45%);
+  background: hsl(var(--tag-hue, 210) 55% 45%);
+  color: #fff;
+  font-weight: 700;
+}
+
+.platform-chip--neutral {
+  border-color: var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.platform-chip--neutral:hover {
   border-color: var(--border-strong);
   color: var(--text);
 }
 
-.platform-chip--active {
-  background: var(--accent);
+.platform-chip--neutral.platform-chip--active {
   border-color: var(--accent);
+  background: var(--accent);
   color: #fff;
 }
 
@@ -170,9 +269,9 @@ html[data-theme='dark'] .apps-bg {
 }
 
 .category-filter-toggle--active {
-  border-color: hsl(var(--tag-hue, 210) 70% 50% / 0.5);
-  background: hsl(var(--tag-hue, 210) 70% 50% / 0.15);
-  color: hsl(var(--tag-hue, 210) 75% 42%);
+  border-color: hsl(var(--tag-hue, 210) 55% 55% / 0.5);
+  background: hsl(var(--tag-hue, 210) 55% 55% / 0.15);
+  color: hsl(var(--tag-hue, 210) 55% 48%);
 }
 
 .category-filter-toggle--vlt {
@@ -207,9 +306,9 @@ html[data-theme='dark'] .apps-bg {
 }
 
 .category-pill {
-  border: 1px solid hsl(var(--tag-hue, 210) 70% 50% / 0.35);
-  background: hsl(var(--tag-hue, 210) 70% 50% / 0.15);
-  color: hsl(var(--tag-hue, 210) 75% 42%);
+  border: 1px solid hsl(var(--tag-hue, 210) 55% 55% / 0.35);
+  background: hsl(var(--tag-hue, 210) 55% 55% / 0.15);
+  color: hsl(var(--tag-hue, 210) 55% 48%);
   font-size: 0.72rem;
   font-weight: 600;
   padding: 0.32rem 0.75rem;
@@ -320,7 +419,7 @@ html[data-theme='dark'] .apps-bg {
 }
 
 .apps-view .apps-grid {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
 }
 

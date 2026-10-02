@@ -1,18 +1,35 @@
 import { useState } from 'react'
-import { HiOutlineChevronRight } from 'react-icons/hi2'
+import { HiOutlineTag, HiOutlineGlobeAlt } from 'react-icons/hi2'
+import { SiGithub } from 'react-icons/si'
 import { PLATFORM_META, getPlatforms, useAppDownloads, useCategoryHues } from './DataContext.jsx'
 import { VLT_CATEGORY } from '../lib/access.js'
 import { getDescription } from '../lib/appText.js'
 import { hashHue } from '../lib/tagColor.js'
+import { useVoucher } from '../lib/voucherStore.js'
 import { useLang } from '../lib/uiText.js'
 import '../css/appcard.css'
 
+const versionLabel = version => (/^[0-9]/.test(version) ? `v${version}` : version)
+
+const openExternal = (e, url) => {
+  e.stopPropagation()
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+const stopKeyThenOpen = (e, url) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return
+  e.preventDefault()
+  openExternal(e, url)
+}
+
 const AppCard = ({ app, index = 0, onSelect, compact = false, featured = false }) => {
-  const { lang } = useLang()
+  const { lang, t } = useLang()
   const [logoFailed, setLogoFailed] = useState(false)
-  const { downloads } = useAppDownloads(app)
+  const { downloads, version } = useAppDownloads(app)
   const categoryHues = useCategoryHues()
   const isVlt = app.category === VLT_CATEGORY
+  const voucher = useVoucher(app)
+  const locked = voucher.gated && !voucher.unlocked
 
   return (
     <button
@@ -21,21 +38,60 @@ const AppCard = ({ app, index = 0, onSelect, compact = false, featured = false }
       onClick={() => onSelect(app)}
       style={{ '--i': index, '--tag-hue': categoryHues.get(app.category) }}
     >
-      <HiOutlineChevronRight className="app-card-ext" />
-
-      <div className="app-logo-wrap">
-        {!logoFailed && app.logo ? (
-          <img
-            className="app-logo"
-            src={app.logo}
-            alt=""
-            loading="lazy"
-            onError={() => setLogoFailed(true)}
-          />
-        ) : (
-          <span className="app-badge" style={{ '--badge-hue': hashHue(app.name) }}>
-            {app.name.charAt(0)}
-          </span>
+      <div className="app-card-header">
+        <div className="app-logo-wrap">
+          {!logoFailed && app.logo ? (
+            <img
+              className="app-logo"
+              src={app.logo}
+              alt=""
+              loading="lazy"
+              onError={() => setLogoFailed(true)}
+            />
+          ) : (
+            <span className="app-badge" style={{ '--badge-hue': hashHue(app.name) }}>
+              {app.name.charAt(0)}
+            </span>
+          )}
+        </div>
+        {!compact && (
+          <div className="app-card-badges">
+            {app.publisher && <span className="app-publisher-pill">{app.publisher}</span>}
+            {version && (
+              <span className="app-version-pill">
+                <HiOutlineTag className="app-version-pill-icon" aria-hidden="true" />
+                {versionLabel(version)}
+              </span>
+            )}
+            {!locked && (app.repo || app.url) && (
+              <div className="app-card-links">
+                {app.repo && (
+                  <span
+                    className="app-card-link-btn"
+                    role="link"
+                    tabIndex={0}
+                    aria-label={t('downloadCard.viewOnGithub')}
+                    onClick={e => openExternal(e, app.repo)}
+                    onKeyDown={e => stopKeyThenOpen(e, app.repo)}
+                  >
+                    <SiGithub />
+                  </span>
+                )}
+                {app.url && (
+                  <span
+                    className="app-card-link-btn"
+                    role="link"
+                    tabIndex={0}
+                    aria-label={t('downloadCard.visitWebsite')}
+                    onClick={e => openExternal(e, app.url)}
+                    onKeyDown={e => stopKeyThenOpen(e, app.url)}
+                  >
+                    <HiOutlineGlobeAlt />
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         )}
       </div>
 
@@ -52,7 +108,7 @@ const AppCard = ({ app, index = 0, onSelect, compact = false, featured = false }
             const Icon = PLATFORM_META[p].icon
             return (
               <span key={p} className="app-platform-chip">
-                {featured && <Icon className="app-platform-chip-icon" aria-hidden="true" />}
+                <Icon className="app-platform-chip-icon" aria-hidden="true" />
                 {PLATFORM_META[p].label}
               </span>
             )

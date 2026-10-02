@@ -32,9 +32,7 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
       await navigator.clipboard.writeText(command)
       setCopied(true)
       setTimeout(() => setCopied(false), 1600)
-    } catch {
-      // Clipboard API unavailable — nothing to fall back to, just skip the feedback.
-    }
+    } catch {}
   }
 
   const related = apps.filter(a => a.id !== app.id && a.category === app.category).slice(0, 4)
@@ -94,7 +92,7 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
                     {getPlatforms(downloads).map(p => {
                       const Icon = PLATFORM_META[p].icon
                       return (
-                        <span key={p} className="detail-tag-pill" style={{ '--tag-hue': PLATFORM_META[p].hue }}>
+                        <span key={p} className="detail-tag-pill detail-tag-pill--platform" style={{ '--tag-hue': PLATFORM_META[p].hue }}>
                           <Icon className="detail-tag-pill-icon" />
                           {PLATFORM_META[p].label}
                         </span>

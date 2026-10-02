@@ -4,6 +4,7 @@ import '../css/aboutmodal.css'
 import { HiXMark } from 'react-icons/hi2'
 import { FiInfo } from 'react-icons/fi'
 import NxgetLogo from './NxgetLogo.jsx'
+import VltLogo from './VltLogo.jsx'
 import { useLang } from '../lib/uiText.js'
 import pkg from '../../package.json'
 
@@ -77,8 +78,19 @@ const AboutModal = ({ onClose }) => {
             ))}
           </div>
 
-          <p className="amo-notice">
-            {t('aboutModal.notice')}<br />
+          <p className="amo-notice">{t('aboutModal.notice')}</p>
+
+          <a
+            className="amo-vlt-link"
+            href="https://lorenzoveronesi.it"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="lorenzoveronesi.it"
+          >
+            <VltLogo size="2.1rem" staticExpanded />
+          </a>
+
+          <p className="amo-notice amo-notice--copy">
             © 2026 vlT · Veronesi Lorenzo. {t('aboutModal.rights')}
           </p>
         </div>

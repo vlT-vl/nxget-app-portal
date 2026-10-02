@@ -8,11 +8,7 @@ import { useCatalog, useNewestAppIds } from './DataContext.jsx'
 import { useLang } from '../lib/uiText.js'
 import '../css/homeview.css'
 
-const FEATURED_COUNT = 5
-// Logo completo (icona a onda + scritta a macchina da scrivere, vedi
-// nxgetlogo.css): l'onda finisce a 0.855s, la scritta parte a 0.95s e dura
-// 0.7s ⇒ tutto composto a 1.65s. L'attesa lascia il logo intero a schermo
-// solo un istante in più dopo, "il tempo di vederlo", non un'attesa vuota.
+const FEATURED_COUNT = 4
 const SPLASH_HOLD_MS = 1950
 const SPLASH_FADE_MS = 350
 

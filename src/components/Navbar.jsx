@@ -3,13 +3,14 @@ import Theme from './Theme.jsx'
 import LanguageToggle from './LanguageToggle.jsx'
 import NxgetLogo from './NxgetLogo.jsx'
 import { SiGithub } from 'react-icons/si'
+import { HiOutlineInformationCircle } from 'react-icons/hi2'
 import { useLang } from '../lib/uiText.js'
 
 const GITHUB_URL = import.meta.env.VITE_GITHUB_URL
 
 const LINKS = ['home', 'apps', 'features', 'cli', 'about']
 
-const Navbar = ({ view, onNav, hidden = false }) => {
+const Navbar = ({ view, onNav, hidden = false, onOpenAbout }) => {
   const { t } = useLang()
 
   return (
@@ -32,6 +33,9 @@ const Navbar = ({ view, onNav, hidden = false }) => {
       </ul>
 
       <div className="navbar-socials">
+        <button className="navbar-social-btn navbar-info-btn" onClick={onOpenAbout} type="button" aria-label={t('nav.info')} title={t('nav.info')}>
+          <HiOutlineInformationCircle />
+        </button>
         {GITHUB_URL && (
           <a className="navbar-social-btn" href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
             <SiGithub />

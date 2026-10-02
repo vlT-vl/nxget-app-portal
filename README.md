@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.0--R240926-b23b3f?style=flat-square" alt="version"/>
+  <img src="https://img.shields.io/badge/version-0.1.1--R021026-b23b3f?style=flat-square" alt="version"/>
   <img src="https://img.shields.io/badge/react-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="react"/>
   <img src="https://img.shields.io/badge/vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="vite"/>
   <img src="https://img.shields.io/badge/deploy-GitHub%20Pages-black?style=flat-square&logo=github" alt="deploy"/>
@@ -112,36 +112,13 @@ Apps resolved via `match` need a GitHub repository that actually publishes insta
 
 ## Restricted apps — voucher & license
 
-First-party apps in the `vlT Software` category are distributed **only by the owner's permission**: their download buttons are locked until a valid voucher is entered (the category, or `access: voucher` in the manifest, is what locks them). Version and version history stay visible. There is no backend, no login and no sign-up:
+First-party apps in the `vlT Software` category are distributed **only by the owner's permission**: their download buttons are locked until a valid voucher is entered (the category, or `access: voucher` in the manifest, is what locks them). Version and version history stay visible. There is no backend, no login and no sign-up: the visitor requests access from the app's detail page, the owner approves it offline, and the visitor pastes the voucher they receive back to unlock the downloads for a limited, owner-chosen amount of time. When it expires the downloads lock again and a new voucher is required.
 
-1. **Request** — on the app's detail page the download buttons are shown locked, next to a "Request voucher" pill (the request form itself only opens when it's clicked, and can be closed again with the × once open). The visitor enters first and last name (letters only, 24 characters in total) and the portal generates a personal *request code*: always **28 characters, the same length for everyone**, with the name written inside (one character per letter, padded to 24) followed by a 10-bit app tag and a 10-bit random nonce. The code can be decoded back into the name, so it still identifies who asked if the voucher gets passed around. The visitor sends the code to the contact address shown in the panel, by email or however they prefer — the portal sends nothing on its own.
-2. **Approval** — the owner runs `node tools/voucher.mjs issue <request code>` locally, passing only that code. The script reads name, surname and app out of it (the app from the tag, looked up in the public catalog), **signs** the request with an Ed25519 private key that never leaves the owner's machine, records who it is for in a local JSON file, and prints the **complete voucher: 131 characters** (the 28 of the request + a 103-character signature). Nothing in the repository or the deployed site changes when a voucher is issued.
-3. **Unlock** — the visitor always pastes the **complete** voucher (anything else is rejected). The portal checks the signature with the owner's **public key**, using the browser's built-in WebCrypto Ed25519, and that the app tag matches the page.
-4. **Time-limited** — the unlock lasts **10 minutes** (`UNLOCK_MINUTES` in `src/lib/voucherStore.js`), with a countdown on the page. The voucher itself is never stored: right after verification the portal keeps only the expiry time. When it runs out — or if the page is reloaded after that — every trace is deleted (expiry, request code, name) and the downloads lock again: a **new voucher is required**. The one thing kept is a one-way hash of the spent voucher, so that the same voucher is refused if pasted again in that browser.
-
-### The public key
-
-The public key (`VITE_VOUCHER_PUBLIC_KEY`, 43 characters) is not a secret and lives in `.env`, which is committed with the rest of the project: the automatic deploy that runs on every push builds with it and nothing else has to be configured. The owner's script writes that line by itself. If it is missing the site still works and the unlock form says the voucher system isn't active yet; a browser without WebCrypto Ed25519 gets a specific message.
-
-Changing the key — `node tools/voucher.mjs init --reset --yes` — is decided by the owner at any time: it generates a new key pair (backing up the old one) and rewrites the `.env` line; after the next commit and push all vouchers issued with the previous key stop working. Otherwise the key never changes, and issuing a voucher touches nothing in the repository.
-
-**Security.** Vouchers are digital signatures, so they **can't be forged**: the public key verifies but cannot sign, and neither the public key nor any number of valid vouchers lets anyone build another one. The price is length — a secure public-key signature can't fit in a short code, hence 131 characters.
+**Security.** A voucher can't be forged by anyone who only has the public site, including every voucher ever issued — approving one requires a private credential that never leaves the owner's machine.
 
 **What it still doesn't do.** It is not access control: the repositories are public, so anyone who finds a release URL can download it, and a voucher can be forwarded (the requester's name stays inside it). Using a voucher once only stops that browser from reusing it — clearing site data or using another browser gets around it, since nothing is stored server-side. Doing any of this violates the license terms, which the disclaimer states on the page.
 
 **License button.** Every app detail page has a *License* button opening a modal with the license text. The manifest can declare `license` (a URL string or `{ url }`, GitHub `blob` links are converted to raw for CORS); without it the portal looks for `LICENSE`, `LICENSE.md`, `LICENSE.txt`, `LICENCE` or `COPYING` in the app's `repo`. The button only appears when the license text was actually retrieved — an app with no license (or one that can't be fetched) simply has no button.
-
-### Owner tooling (`tools/voucher.mjs`, Node 20+, no dependencies)
-
-The `tools/` folder is git-ignored and **never part of the published repository**: it holds the private key, the issued-vouchers history (personal data) and a private write-up of the system, and lives only on the owner's machine. The script refuses to run if git tracks it or fails to ignore it.
-
-```bash
-node tools/voucher.mjs init                        # creates the key pair if missing, writes the public key into .env and prints it
-node tools/voucher.mjs init --reset --yes          # changes the key: new pair (old one backed up in tools/backup/), .env rewritten
-node tools/voucher.mjs issue <request code>        # prints the complete 131-character voucher and logs who it is for
-```
-
-`init` is safe to repeat: it leaves an existing key alone and rewrites only the `VITE_VOUCHER_PUBLIC_KEY` line of `.env` (recreating the file if needed). `issue` refuses a request already registered under the current key unless `--reissue` is passed (Ed25519 is deterministic, so it prints the same voucher again). The script does only these two things and shares `src/lib/voucher.js` with the portal, which contains the verification and formats but no signing code.
 
 ---
 
@@ -154,7 +131,6 @@ nxget-app-portal/
 ├── vite.config.js
 ├── package.json
 ├── .env                           # VITE_BASE_URL, VITE_GITHUB_URL, VITE_VOUCHER_PUBLIC_KEY (public key, committed)
-├── tools/                         # owner-side voucher script + data — git-ignored entirely, never published
 └── src/
     ├── main.jsx                   # entry point, wraps <App/> in <DataProvider> + <LanguageProvider>
     ├── components/
@@ -172,7 +148,7 @@ nxget-app-portal/
     │   ├── access.js               # which apps are voucher-gated (`vlT Software` category or `access: voucher`)
     │   ├── appText.js              # localized card preview text from a manifest's description/about
     │   ├── tagColor.js             # shared hash-to-hue formula for category pill / logo fallback colors
-    │   ├── voucher.js              # request code + Ed25519 voucher verification (WebCrypto), shared by the portal and tools/voucher.mjs
+    │   ├── voucher.js              # download-voucher verification
     │   ├── voucherStore.js         # useVoucher hook + localStorage persistence
     │   └── theme.js                # light/dark preference
     ├── content/about.{it,en}.txt   # About page copy, one file per language
@@ -212,7 +188,7 @@ Create a `.env` file in the root:
 ```env
 VITE_BASE_URL=/            # set to /nxget-app-portal/ if deployed as a GitHub Pages *project* page
 VITE_GITHUB_URL=           # repo URL; GitHub links only render when this is set
-VITE_VOUCHER_PUBLIC_KEY=   # written by `node tools/voucher.mjs init`; without it the voucher unlock says it isn't active
+VITE_VOUCHER_PUBLIC_KEY=   # owner-managed; without it the voucher unlock says it isn't active
 ```
 
 ---
@@ -231,9 +207,9 @@ The repo has no committed `package-lock.json` yet, so the workflow runs a plain 
 
 | Field | Value |
 |---|---|
-| Version | 0.1.0 |
-| Build | R240926 |
-| Updated | 24 September 2026 |
+| Version | 0.1.1 |
+| Build | R021026 |
+| Updated | 2 October 2026 |
 
 ---
 

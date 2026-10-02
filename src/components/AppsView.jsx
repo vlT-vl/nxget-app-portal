@@ -11,10 +11,19 @@ import { useLang } from '../lib/uiText.js'
 import '../css/appsview.css'
 
 const PLATFORMS = Object.keys(PLATFORM_META)
-const PAGE_SIZE = 15
+const PAGE_SIZE = 16
 const CATEGORY_CLOSE_MS = 180
 
-const AppsView = ({ state, onStateChange, onSelect }) => {
+const AppsTitleIcon = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect className="apps-icon-sq apps-icon-sq-1" x="2" y="2" width="7" height="7" rx="1.5" />
+    <rect className="apps-icon-sq apps-icon-sq-2" x="15" y="2" width="7" height="7" rx="1.5" />
+    <rect className="apps-icon-sq apps-icon-sq-3" x="2" y="15" width="7" height="7" rx="1.5" />
+    <rect className="apps-icon-sq apps-icon-sq-4" x="15" y="15" width="7" height="7" rx="1.5" />
+  </svg>
+)
+
+const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, onTitlePlayed }) => {
   const { t, lang } = useLang()
   const { apps, status, refreshCatalog } = useCatalog()
   const categoryHues = useCategoryHues()
@@ -24,6 +33,11 @@ const AppsView = ({ state, onStateChange, onSelect }) => {
   const [categoryClosing, setCategoryClosing] = useState(false)
   const viewRef = useRef(null)
   const categoryRef = useRef(null)
+  const [animateTitle] = useState(() => !titleAlreadyPlayed)
+
+  useEffect(() => {
+    if (animateTitle) onTitlePlayed?.()
+  }, [animateTitle, onTitlePlayed])
 
   const closeCategoryMenu = () => {
     setCategoryClosing(true)
@@ -98,88 +112,97 @@ const AppsView = ({ state, onStateChange, onSelect }) => {
       <div className="apps-inner">
         <CatalogTower className="apps-bg" restartInterval={CATALOG_RESTART_MS} />
         <FlowGlyph className="apps-flow" />
-        <header className="apps-page-header">
-          <h1 className="section-title">{t('apps.title')}</h1>
+        <header className={`apps-page-header${animateTitle ? ' apps-page-header--animate' : ''}`}>
+          <h1 className="section-title apps-title">
+            <AppsTitleIcon className="apps-title-icon" />
+            <span className="apps-title-text">{t('apps.title')}</span>
+          </h1>
           <p className="section-subtitle">{t('apps.subtitle')}</p>
         </header>
 
-        <div className="apps-search">
-          <HiOutlineSearch className="apps-search-icon" />
-          <input
-            type="search"
-            className="apps-search-input"
-            placeholder={t('search.placeholder')}
-            value={query}
-            onChange={e => changeQuery(e.target.value)}
-            aria-label={t('search.ariaLabel')}
-            autoFocus
-          />
-        </div>
-
-        <div className="apps-filters">
-          <div className="platform-filter">
-            <button
-              className={`platform-chip${platform === 'all' ? ' platform-chip--active' : ''}`}
-              onClick={() => changePlatform('all')}
-            >
-              {t('apps.filterAll')}
-            </button>
-            {PLATFORMS.map(p => (
-              <button
-                key={p}
-                className={`platform-chip${platform === p ? ' platform-chip--active' : ''}`}
-                onClick={() => changePlatform(p)}
-              >
-                {PLATFORM_META[p].label}
-              </button>
-            ))}
+        <div className="apps-controls">
+          <div className="apps-search">
+            <HiOutlineSearch className="apps-search-icon" />
+            <input
+              type="search"
+              className="apps-search-input"
+              placeholder={t('search.placeholder')}
+              value={query}
+              onChange={e => changeQuery(e.target.value)}
+              aria-label={t('search.ariaLabel')}
+            />
           </div>
 
-          {categories.length > 0 && (
-            <div className="category-filter" ref={categoryRef}>
+          <div className="apps-filters">
+            <div className="platform-filter">
               <button
-                type="button"
-                className={`category-filter-toggle${category !== 'all' ? ' category-filter-toggle--active' : ''}${category === VLT_CATEGORY ? ' category-filter-toggle--vlt' : ''}`}
-                onClick={toggleCategoryMenu}
-                aria-haspopup="listbox"
-                aria-expanded={categoryOpen && !categoryClosing}
-                style={category !== 'all' && category !== VLT_CATEGORY ? { '--tag-hue': categoryHues.get(category) } : undefined}
+                className={`platform-chip platform-chip--neutral${platform === 'all' ? ' platform-chip--active' : ''}`}
+                onClick={() => changePlatform('all')}
               >
-                {category === 'all' ? t('apps.filterCategory') : category}
-                <HiOutlineChevronDown className="category-filter-icon" />
+                {t('apps.filterAllPlatforms')}
               </button>
-
-              {categoryOpen && (
-                <div
-                  className={`category-filter-panel${categoryClosing ? ' category-filter-panel--closing' : ''}`}
-                  role="listbox"
-                >
+              {PLATFORMS.map(p => {
+                const Icon = PLATFORM_META[p].icon
+                return (
                   <button
-                    type="button"
-                    role="option"
-                    aria-selected={category === 'all'}
-                    className={`category-pill${category === 'all' ? ' category-pill--active' : ''}`}
-                    onClick={() => changeCategory('all')}
+                    key={p}
+                    className={`platform-chip${platform === p ? ' platform-chip--active' : ''}`}
+                    style={{ '--tag-hue': PLATFORM_META[p].hue }}
+                    onClick={() => changePlatform(p)}
                   >
-                    {t('apps.filterAll')}
+                    <Icon className="platform-chip-icon" aria-hidden="true" />
+                    {PLATFORM_META[p].label}
                   </button>
-                  {categories.map(c => (
+                )
+              })}
+            </div>
+
+            {categories.length > 0 && (
+              <div className="category-filter" ref={categoryRef}>
+                <button
+                  type="button"
+                  className={`category-filter-toggle${category !== 'all' ? ' category-filter-toggle--active' : ''}${category === VLT_CATEGORY ? ' category-filter-toggle--vlt' : ''}`}
+                  onClick={toggleCategoryMenu}
+                  aria-haspopup="listbox"
+                  aria-expanded={categoryOpen && !categoryClosing}
+                  style={category !== 'all' && category !== VLT_CATEGORY ? { '--tag-hue': categoryHues.get(category) } : undefined}
+                >
+                  {category === 'all' ? t('apps.filterCategory') : category}
+                  <HiOutlineChevronDown className="category-filter-icon" />
+                </button>
+
+                {categoryOpen && (
+                  <div
+                    className={`category-filter-panel${categoryClosing ? ' category-filter-panel--closing' : ''}`}
+                    role="listbox"
+                  >
                     <button
-                      key={c}
                       type="button"
                       role="option"
-                      aria-selected={category === c}
-                      className={`category-pill${c === VLT_CATEGORY ? ' category-pill--vlt' : ''}${category === c ? ' category-pill--active' : ''}`}
-                      style={c === VLT_CATEGORY ? undefined : { '--tag-hue': categoryHues.get(c) }}
-                      onClick={() => changeCategory(c)}
+                      aria-selected={category === 'all'}
+                      className={`category-pill${category === 'all' ? ' category-pill--active' : ''}`}
+                      onClick={() => changeCategory('all')}
                     >
-                      {c}
+                      {t('apps.filterAll')}
                     </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    {categories.map(c => (
+                      <button
+                        key={c}
+                        type="button"
+                        role="option"
+                        aria-selected={category === c}
+                        className={`category-pill${c === VLT_CATEGORY ? ' category-pill--vlt' : ''}${category === c ? ' category-pill--active' : ''}`}
+                        style={c === VLT_CATEGORY ? undefined : { '--tag-hue': categoryHues.get(c) }}
+                        onClick={() => changeCategory(c)}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {status === 'loading' && apps.length === 0 && (

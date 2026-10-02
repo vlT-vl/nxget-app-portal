@@ -2,6 +2,11 @@
 
 Le funzionalità principali del portale, in ordine cronologico inverso.
 
+## 2026-10-02
+
+- Durata dello sblocco del voucher ora decisa dal titolare al momento
+  dell'emissione (prima era fissa per tutti).
+
 ## 2026-09-24
 
 - First public release, published on GitHub Pages with automatic deploy on every push to `main`.

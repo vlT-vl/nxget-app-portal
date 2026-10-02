@@ -24,12 +24,8 @@ const App = () => {
   const [aboutOpen, setAboutOpen] = useState(false)
   const [selectedApp, setSelectedApp] = useState(null)
   const [returnView, setReturnView] = useState('home')
-  // Una tantum per sessione: `HomeView` si rimonta ogni volta che si torna
-  // in Home (stesso `<main key={view}>` di sempre), ma questo flag vive
-  // qui, non dentro `HomeView`, quindi non si resetta con lei — passato giù
-  // come "l'ho già visto", una sola vera esecuzione dello splash finché la
-  // pagina non viene ricaricata.
   const [homeSplashDone, setHomeSplashDone] = useState(false)
+  const [appsTitlePlayed, setAppsTitlePlayed] = useState(false)
   const homeSplashActive = view === 'home' && !homeSplashDone
 
   const nav = (v, q = '') => {
@@ -58,7 +54,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <Navbar view={view} onNav={nav} hidden={homeSplashActive} />
+      <Navbar view={view} onNav={nav} hidden={homeSplashActive} onOpenAbout={() => setAboutOpen(true)} />
       <main key={view} className="view-content">
         {view === 'home'       && (
           <HomeView
@@ -68,7 +64,15 @@ const App = () => {
             onSplashDone={() => setHomeSplashDone(true)}
           />
         )}
-        {view === 'apps'       && <AppsView state={appsState} onStateChange={setAppsState} onSelect={openDetail} />}
+        {view === 'apps'       && (
+          <AppsView
+            state={appsState}
+            onStateChange={setAppsState}
+            onSelect={openDetail}
+            titleAlreadyPlayed={appsTitlePlayed}
+            onTitlePlayed={() => setAppsTitlePlayed(true)}
+          />
+        )}
         {view === 'features'   && <FeaturesView />}
         {view === 'cli'        && <CliView />}
         {view === 'about'      && <AboutView onOpenAbout={() => setAboutOpen(true)} />}

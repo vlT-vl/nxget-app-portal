@@ -3,12 +3,10 @@ import { decodeRequest, encodeRequest, normalizeName, parseVoucherInput, verifyV
 import { isVoucherGated } from './access.js'
 
 export const VOUCHER_CONTACT = 'veronesilorenzo@outlook.com'
-export const UNLOCK_MINUTES = 10
 
 const STORAGE_KEY = 'vlt-nxget-vouchers'
 const USED_KEY = 'vlt-nxget-used-vouchers'
 const USED_LIMIT = 200
-const UNLOCK_MS = UNLOCK_MINUTES * 60 * 1000
 
 const PUBLIC_KEY = import.meta.env.VITE_VOUCHER_PUBLIC_KEY || null
 
@@ -110,14 +108,14 @@ export const useVoucher = app => {
     const parsed = parseVoucherInput(text)
     if (!parsed) return { ok: false, reason: 'format' }
 
-    const result = await verifyVoucher({ request: parsed.request, signature: parsed.signature, appId: app.id, publicKey: PUBLIC_KEY })
+    const result = await verifyVoucher({ payload: parsed.payload, signature: parsed.signature, appId: app.id, publicKey: PUBLIC_KEY })
     if (!result.ok) return result
 
     const used = read(USED_KEY) ?? []
     if (used.includes(result.fingerprint)) return { ok: false, reason: 'used' }
     write(USED_KEY, [...used, result.fingerprint].slice(-USED_LIMIT))
 
-    save({ unlockedUntil: Date.now() + UNLOCK_MS })
+    save({ unlockedUntil: result.expiresAt })
     return { ok: true }
   }
 

@@ -12,6 +12,7 @@ export const uiText = {
       features: 'Perché nxget',
       cli: 'CLI',
       about: 'About',
+      info: 'Informazioni',
     },
     search: {
       placeholder: "Cerca un'app...",
@@ -51,6 +52,7 @@ export const uiText = {
       title: 'Applicazioni',
       subtitle: 'Sfoglia la libreria e scarica dalla fonte ufficiale.',
       filterAll: 'Tutte',
+      filterAllPlatforms: 'Tutti gli OS',
       filterCategory: 'Categoria',
       empty: 'Nessuna app trovata per "{query}".',
       emptyFiltered: 'Nessuna app trovata con questi filtri.',
@@ -186,14 +188,15 @@ export const uiText = {
       sendToAfter: '(email o richiesta): riceverai il tuo voucher completo, da incollare qui sotto.',
       change: 'Modifica nome e cognome',
       redeemLabel: 'Hai già ricevuto il voucher completo?',
-      redeemPlaceholder: 'Incolla il voucher completo (131 caratteri)',
+      redeemPlaceholder: 'Incolla il voucher completo (136 caratteri)',
       redeem: 'Sblocca',
       err: {
         name: 'Inserisci nome e cognome con sole lettere (massimo 24 caratteri in tutto, spazi inclusi).',
-        format: 'Inserisci il voucher completo, di 131 caratteri: controlla di averlo copiato per intero.',
+        format: 'Inserisci il voucher completo, di 136 caratteri: controlla di averlo copiato per intero.',
         app: 'Questo voucher è stato emesso per un altro software.',
         invalid: 'Voucher non valido.',
         used: 'Questo voucher è già stato usato: ne serve uno nuovo.',
+        expired: 'Questo voucher è scaduto: richiedine uno nuovo.',
         unavailable: 'Il sistema di voucher non è ancora attivo su questo sito: riprova più tardi.',
         unsupported: 'Questo browser non supporta la verifica dei voucher: aggiornalo o usane uno più recente.',
       },
@@ -230,6 +233,7 @@ export const uiText = {
       features: 'Why nxget',
       cli: 'CLI',
       about: 'About',
+      info: 'Info',
     },
     search: {
       placeholder: 'Search for an app...',
@@ -269,6 +273,7 @@ export const uiText = {
       title: 'Applications',
       subtitle: 'Browse the library and download from the official source.',
       filterAll: 'All',
+      filterAllPlatforms: 'All OSes',
       filterCategory: 'Category',
       empty: 'No app found for "{query}".',
       emptyFiltered: 'No app matches these filters.',
@@ -404,14 +409,15 @@ export const uiText = {
       sendToAfter: '(email or request): you will get your complete voucher, to paste below.',
       change: 'Change first and last name',
       redeemLabel: 'Already got your complete voucher?',
-      redeemPlaceholder: 'Paste the complete voucher (131 characters)',
+      redeemPlaceholder: 'Paste the complete voucher (136 characters)',
       redeem: 'Unlock',
       err: {
         name: 'Enter a first and last name using letters only (24 characters max in total, spaces included).',
-        format: 'Enter the complete 131-character voucher: check that you copied all of it.',
+        format: 'Enter the complete 136-character voucher: check that you copied all of it.',
         app: 'This voucher was issued for a different software.',
         invalid: 'This voucher is not valid.',
         used: 'This voucher has already been used: a new one is required.',
+        expired: 'This voucher has expired: a new one is required.',
         unavailable: "The voucher system isn't active on this site yet: please try again later.",
         unsupported: 'This browser cannot verify vouchers: please update it or use a newer one.',
       },
@@ -454,9 +460,7 @@ export const getLangPreference = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
     if (LANGS.has(saved)) return saved
-  } catch {
-    // localStorage unavailable (privacy mode, etc.): fall back to the default.
-  }
+  } catch {}
   return DEFAULT_LANG
 }
 
@@ -464,9 +468,7 @@ export const setLangPreference = lang => {
   const normalized = LANGS.has(lang) ? lang : DEFAULT_LANG
   try {
     localStorage.setItem(STORAGE_KEY, normalized)
-  } catch {
-    // The <html lang> attribute is still updated by the provider regardless.
-  }
+  } catch {}
   return normalized
 }
 

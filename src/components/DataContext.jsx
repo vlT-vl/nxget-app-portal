@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { SiApple, SiLinux } from 'react-icons/si'
 import { DiWindows } from 'react-icons/di'
-import yaml from 'js-yaml'
+import { load as parseYaml } from 'js-yaml'
 import { isVoucherGated, VLT_CATEGORY } from '../lib/access.js'
 import { buildCategoryHues } from '../lib/tagColor.js'
 
@@ -13,7 +13,7 @@ const CATALOG_REFRESH_MS = 60 * 60 * 1000
 const fetchCatalog = async () => {
   const index = await fetch(`${REGISTRY_BASE_URL}/v1/index.json`).then(r => r.json())
   const manifests = await Promise.all(
-    index.apps.map(entry => fetch(entry.manifest).then(r => r.text()).then(text => yaml.load(text)))
+    index.apps.map(entry => fetch(entry.manifest).then(r => r.text()).then(text => parseYaml(text)))
   )
   return manifests.sort((a, b) => a.name.localeCompare(b.name))
 }

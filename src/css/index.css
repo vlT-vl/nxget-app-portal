@@ -1,15 +1,8 @@
-/* index.css — stili globali                                                 */
-/*****************************************************************************/
-
 :root {
-  /* Responsive horizontal padding: centers content up to a max of 1600px.
-     Below 1600px it falls back to at least 1.5rem. On 21:9+ screens the
-     content stays centered. */
   --pad: max(1.5rem, calc((100vw - 1600px) / 2));
 
   --vlt-gradient: linear-gradient(130deg, rgba(255, 59, 48, 0.22) 0%, rgba(193, 18, 31, 0.28) 50%, rgba(102, 7, 8, 0.5) 100%);
 
-  /* ── Theme: dark (default) ── */
   --bg:             #232325;
   --bg-elevated:    #1a1a1a;
   --bg-elevated-2:  #161616;
@@ -89,12 +82,6 @@ body {
   color: var(--text-muted);
 }
 
-/* nxget logo (src/res/nxget-logo.svg, injected inline by NxgetLogo.jsx).
-   The file itself sets --soft-fill via prefers-color-scheme; here we override
-   it based on the theme *chosen* in the app (data-theme), not the OS theme,
-   so the logo stays legible even when the user manually picks a theme that
-   differs from their system setting. Attribute selector for higher
-   specificity than the file's own :root rule. */
 html[data-theme='dark']  { --soft-fill: #ffffff; }
 html[data-theme='light'] { --soft-fill: #282828; }
 
@@ -104,7 +91,6 @@ html[data-theme='light'] { --soft-fill: #282828; }
   display: block;
 }
 
-/* ── Animazioni condivise ── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -113,6 +99,11 @@ html[data-theme='light'] { --soft-fill: #282828; }
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-10px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeOutUp {

@@ -1,16 +1,20 @@
 const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
 const NAME_SYMBOLS = "abcdefghijklmnopqrstuvwxyz -'"
-const MESSAGE_PREFIX = 'nxget-voucher-v9:'
-const FINGERPRINT_PREFIX = 'nxget-voucher-fingerprint-v9:'
+const MESSAGE_PREFIX = 'nxget-voucher-v10:'
+const FINGERPRINT_PREFIX = 'nxget-voucher-fingerprint-v10:'
 const NAME_LENGTH = 24
 const TAIL_LENGTH = 4
 const REQUEST_LENGTH = NAME_LENGTH + TAIL_LENGTH
+const EXPIRY_LENGTH = 5
+const EXPIRY_EPOCH_MS = Date.UTC(2025, 0, 1)
+const MAX_EXPIRY_MINUTES = 2 ** (5 * EXPIRY_LENGTH) - 1
+const PAYLOAD_LENGTH = REQUEST_LENGTH + EXPIRY_LENGTH
 const SIGNATURE_BYTES = 64
 const SIGNATURE_LENGTH = 103
 
 const encoder = new TextEncoder()
 
-const VOUCHER_LENGTH = REQUEST_LENGTH + SIGNATURE_LENGTH
+const VOUCHER_LENGTH = PAYLOAD_LENGTH + SIGNATURE_LENGTH
 
 const cleanCode = text => text.toUpperCase().replace(/[^0-9A-Z]/g, '').replace(/O/g, '0').replace(/[IL]/g, '1')
 
@@ -82,7 +86,28 @@ export const decodeRequest = code => {
   return { code: clean, name, appTag: Number(tail >> 10n), nonce: Number(tail & 0x3ffn) }
 }
 
-export const voucherMessage = requestCode => encoder.encode(MESSAGE_PREFIX + cleanCode(requestCode))
+export const encodeExpiry = expiresAtMs => {
+  const minutes = Math.round((expiresAtMs - EXPIRY_EPOCH_MS) / 60000)
+  if (minutes < 0 || minutes > MAX_EXPIRY_MINUTES) throw new Error('duration')
+  return encodeBig(BigInt(minutes), EXPIRY_LENGTH)
+}
+
+export const decodeExpiry = text => {
+  const clean = cleanCode(text)
+  if (clean.length !== EXPIRY_LENGTH) throw new Error('format')
+  return EXPIRY_EPOCH_MS + Number(decodeBig(clean)) * 60000
+}
+
+export const encodePayload = (requestCode, expiresAtMs) => `${cleanCode(requestCode)}${encodeExpiry(expiresAtMs)}`
+
+export const decodePayload = code => {
+  const clean = cleanCode(code)
+  if (clean.length !== PAYLOAD_LENGTH) throw new Error('format')
+  const decoded = decodeRequest(clean.slice(0, REQUEST_LENGTH))
+  return { ...decoded, expiresAt: decodeExpiry(clean.slice(REQUEST_LENGTH)) }
+}
+
+export const voucherMessage = payloadCode => encoder.encode(MESSAGE_PREFIX + cleanCode(payloadCode))
 
 export const encodeSignature = bytes => encodeBig(bytesToBig(bytes), SIGNATURE_LENGTH)
 
@@ -93,22 +118,22 @@ const decodeSignature = text => {
   return bigToBytes(value, SIGNATURE_BYTES)
 }
 
-export const formatVoucher = (requestCode, signature) => `${cleanCode(requestCode)}${cleanCode(signature)}`
+export const formatVoucher = (payloadCode, signature) => `${cleanCode(payloadCode)}${cleanCode(signature)}`
 
 export const parseVoucherInput = text => {
   const clean = cleanCode(text)
   return clean.length === VOUCHER_LENGTH
-    ? { request: clean.slice(0, REQUEST_LENGTH), signature: clean.slice(REQUEST_LENGTH) }
+    ? { payload: clean.slice(0, PAYLOAD_LENGTH), signature: clean.slice(PAYLOAD_LENGTH) }
     : null
 }
 
 export const voucherFingerprint = voucher => sha256(encoder.encode(FINGERPRINT_PREFIX + cleanCode(voucher)))
 
-export const verifyVoucher = async ({ request, signature, appId, publicKey }) => {
+export const verifyVoucher = async ({ payload, signature, appId, publicKey }) => {
   let decoded
   let signatureBytes
   try {
-    decoded = decodeRequest(request)
+    decoded = decodePayload(payload)
     signatureBytes = decodeSignature(signature)
   } catch {
     return { ok: false, reason: 'format' }
@@ -120,10 +145,13 @@ export const verifyVoucher = async ({ request, signature, appId, publicKey }) =>
   let valid
   try {
     const key = await crypto.subtle.importKey('jwk', { kty: 'OKP', crv: 'Ed25519', x: publicKey }, { name: 'Ed25519' }, false, ['verify'])
-    valid = await crypto.subtle.verify({ name: 'Ed25519' }, key, signatureBytes, voucherMessage(decoded.code))
+    valid = await crypto.subtle.verify({ name: 'Ed25519' }, key, signatureBytes, voucherMessage(payload))
   } catch (error) {
     return { ok: false, reason: error?.name === 'NotSupportedError' ? 'unsupported' : 'invalid' }
   }
 
-  return valid ? { ok: true, fingerprint: await voucherFingerprint(formatVoucher(request, signature)) } : { ok: false, reason: 'invalid' }
+  if (!valid) return { ok: false, reason: 'invalid' }
+  if (decoded.expiresAt <= Date.now()) return { ok: false, reason: 'expired' }
+
+  return { ok: true, expiresAt: decoded.expiresAt, fingerprint: await voucherFingerprint(formatVoucher(payload, signature)) }
 }
