@@ -54,6 +54,11 @@
   display: flex;
   align-items: flex-start;
   gap: 0.7rem;
+  min-width: 0;
+}
+
+.amo-header-left > div {
+  min-width: 0;
 }
 
 .amo-header-icon {
@@ -188,6 +193,8 @@
 }
 
 @media (max-width: 480px) {
-  .amo-grid { grid-template-columns: 1fr 1fr; }
+  .amo-grid { grid-template-columns: 1fr; }
   .amo-header, .amo-body { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .amo-title { font-size: 0.95rem; }
+  .amo-subtitle { word-break: break-word; }
 }

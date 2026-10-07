@@ -109,7 +109,7 @@
 }
 
 .featured-inner {
-  max-width: 74rem;
+  max-width: 80rem;
   margin: 0 auto;
 }
 
@@ -140,7 +140,8 @@
 }
 
 .featured .apps-grid {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, 19rem);
+  justify-content: center;
   gap: 1.25rem;
 }
 
@@ -156,6 +157,6 @@
   }
 
   .featured .apps-grid > * {
-    flex: 0 0 clamp(9.5rem, 60vw, 12rem);
+    flex: 0 0 min(19rem, calc(100vw - 2.5rem));
   }
 }

@@ -17,7 +17,6 @@ export const uiText = {
     search: {
       placeholder: "Cerca un'app...",
       ariaLabel: "Cerca un'app",
-      button: 'Cerca',
     },
     hero: {
       eyebrow: 'Portale open · nessuna registrazione richiesta',
@@ -25,7 +24,13 @@ export const uiText = {
       titleAccent: 'multipiattaforma',
       titleAfter: '',
       subtitle: 'Un unico hub per trovare e scaricare le tue applicazioni per Windows, macOS e Linux — con link diretti alle fonti ufficiali.',
-      stat: '{count} app disponibili e in crescita',
+      discoverCta: 'Scopri le app',
+      stat: {
+        apps: 'app disponibili',
+        live: 'Registro attivo',
+        offline: 'Registro irraggiungibile',
+        updated: 'aggiornato il {date} alle {time}',
+      },
     },
     home: {
       featuredTitle: 'In evidenza',
@@ -50,10 +55,10 @@ export const uiText = {
     },
     apps: {
       title: 'Applicazioni',
-      subtitle: 'Sfoglia la libreria e scarica dalla fonte ufficiale.',
       filterAll: 'Tutte',
       filterAllPlatforms: 'Tutti gli OS',
       filterCategory: 'Categoria',
+      clearFilters: 'Cancella filtri',
       empty: 'Nessuna app trovata per "{query}".',
       emptyFiltered: 'Nessuna app trovata con questi filtri.',
       range: '{from}–{to} di {total} app',
@@ -135,8 +140,7 @@ export const uiText = {
       cta: 'Segui lo sviluppo su GitHub',
     },
     about: {
-      eyebrow: 'Chi siamo',
-      title: 'Da dove viene nxget',
+      title: "L'idea dietro nxget",
       refBlog: 'Il blog personale di Keivan Beigi — "The Day AppGet Died"',
       infoPill: 'INFO',
       copyright: 'Copyright © 2026 vlT di Veronesi Lorenzo — Tutti i diritti riservati',
@@ -151,7 +155,7 @@ export const uiText = {
       platforms: 'Piattaforme',
       appId: 'ID app',
       loading: 'Caricamento…',
-      moreIn: 'Altre app in {category}',
+      moreIn: 'Altre app in',
       cliSummary: 'Installa con la CLI di nxget',
       comingSoon: 'In arrivo',
       copy: 'Copia',
@@ -238,7 +242,6 @@ export const uiText = {
     search: {
       placeholder: 'Search for an app...',
       ariaLabel: 'Search for an app',
-      button: 'Search',
     },
     hero: {
       eyebrow: 'Open portal · no sign-up required',
@@ -246,7 +249,13 @@ export const uiText = {
       titleAccent: 'cross-platform',
       titleAfter: ' software',
       subtitle: 'One place to discover and download applications available on Windows, macOS and Linux — with direct links to their official sources.',
-      stat: '{count} apps available and growing',
+      discoverCta: 'Discover the apps',
+      stat: {
+        apps: 'apps available',
+        live: 'Registry live',
+        offline: 'Registry unreachable',
+        updated: 'updated on {date} at {time}',
+      },
     },
     home: {
       featuredTitle: 'Featured',
@@ -271,10 +280,10 @@ export const uiText = {
     },
     apps: {
       title: 'Applications',
-      subtitle: 'Browse the library and download from the official source.',
       filterAll: 'All',
       filterAllPlatforms: 'All OSes',
       filterCategory: 'Category',
+      clearFilters: 'Clear filters',
       empty: 'No app found for "{query}".',
       emptyFiltered: 'No app matches these filters.',
       range: '{from}–{to} of {total} apps',
@@ -356,8 +365,7 @@ export const uiText = {
       cta: 'Follow development on GitHub',
     },
     about: {
-      eyebrow: 'About',
-      title: 'Where nxget comes from',
+      title: 'The idea behind nxget',
       refBlog: 'Keivan Beigi\'s blog — "The Day AppGet Died"',
       infoPill: 'INFO',
       copyright: 'Copyright © 2026 vlT di Veronesi Lorenzo — All rights reserved',
@@ -372,7 +380,7 @@ export const uiText = {
       platforms: 'Platforms',
       appId: 'App ID',
       loading: 'Loading…',
-      moreIn: 'More {category}',
+      moreIn: 'More in',
       cliSummary: 'Install with the nxget CLI',
       comingSoon: 'Coming soon',
       copy: 'Copy',

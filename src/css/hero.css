@@ -67,65 +67,195 @@
   animation: fadeInUp 0.55s ease 0.16s both;
 }
 
-.hero-search {
+.hero-discover-group {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   width: 100%;
-  max-width: 32rem;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.35rem 0.35rem 0.35rem 1.1rem;
-  transition: border-color 0.2s;
+  gap: 1.4rem;
+}
+
+.hero-discover-anim {
+  width: 20rem;
+  max-width: 100%;
   animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.24s both;
 }
 
-.hero-search:focus-within {
-  border-color: var(--accent);
-}
-
-.hero-search-icon {
-  font-size: 1.1rem;
-  color: var(--text-dim);
-  flex-shrink: 0;
-}
-
-.hero-search-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--text);
-  font-size: 0.9rem;
-  padding: 0.6rem 0.75rem;
-}
-
-.hero-search-input::placeholder {
-  color: var(--text-dim);
-}
-
-.hero-search-btn {
-  border: none;
+.hero-discover-wrap {
+  position: relative;
   border-radius: 999px;
-  padding: 0.6rem 1.3rem;
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 600;
+  overflow: hidden;
+}
+
+.hero-discover-texture {
+  position: absolute;
+  inset: -45%;
+  background:
+    radial-gradient(circle at 24% 45%, rgba(0, 0, 0, 0.16) 0 12%, transparent 32%),
+    radial-gradient(circle at 76% 58%, rgba(0, 0, 0, 0.1) 0 10%, transparent 30%);
+  filter: blur(12px);
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
+
+html[data-theme='dark'] .hero-discover-texture {
+  background:
+    radial-gradient(circle at 24% 45%, rgba(255, 255, 255, 0.28) 0 12%, transparent 32%),
+    radial-gradient(circle at 76% 58%, rgba(255, 255, 255, 0.18) 0 10%, transparent 30%);
+}
+
+.hero-discover {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.75rem 1.2rem;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: var(--text);
   cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+html[data-theme='light'] .hero-discover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.22));
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.hero-discover:hover {
+  border-color: var(--border-strong);
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.21), rgba(255, 255, 255, 0.06));
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+html[data-theme='light'] .hero-discover:hover {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.28));
+  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.hero-discover:focus-visible {
+  outline: 2px solid var(--border-strong);
+  outline-offset: 3px;
+}
+
+.hero-discover-logo {
   flex-shrink: 0;
-  transition: background 0.2s;
+  filter: brightness(0);
 }
 
-.hero-search-btn:hover {
-  background: var(--accent-hover);
+html[data-theme='dark'] .hero-discover-logo {
+  filter: brightness(0) invert(1);
 }
 
-.hero-stat {
-  margin-top: 1.4rem;
-  font-size: 0.78rem;
-  color: var(--text-dim);
+.hero-discover-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.hero-discover-arrow {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  animation: heroDiscoverArrow 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes heroDiscoverArrow {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(7px); }
+  100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-discover-arrow { animation: none; }
+}
+
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   animation: fadeInUp 0.55s ease 0.3s both;
+}
+
+.hero-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.1rem;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.hero-stat-value {
+  min-width: 2ch;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-stat-value--loading {
+  animation: heroStatPulse 1.3s ease-in-out infinite;
+}
+
+@keyframes heroStatPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stat-value--loading { animation: none; }
+}
+
+.hero-live-dot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #3ddc84;
+  flex-shrink: 0;
+}
+
+.hero-live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: heroLiveDotPulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.hero-live-dot--offline {
+  background: var(--text-dim);
+}
+
+.hero-live-dot--offline::after {
+  content: none;
+}
+
+@keyframes heroLiveDotPulse {
+  0%   { transform: scale(1); opacity: 0.65; }
+  70%  { opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-live-dot::after { animation: none; }
 }
 
 @media (max-width: 880px) {
@@ -136,17 +266,13 @@
     align-items: center;
     text-align: center;
   }
+  .hero-discover-group {
+    align-items: center;
+  }
+  .hero-stats {
+    justify-content: center;
+  }
   .hero-illustration {
     width: clamp(10rem, 45vw, 15rem);
   }
-}
-
-@media (max-width: 480px) {
-  .hero-search {
-    flex-wrap: wrap;
-    border-radius: 1.2rem;
-    padding: 0.7rem;
-  }
-  .hero-search-input { width: 100%; padding: 0.4rem 0.5rem; }
-  .hero-search-btn { width: 100%; margin-top: 0.4rem; }
 }

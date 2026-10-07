@@ -6,7 +6,9 @@
   gap: 0.75rem;
   width: 100%;
   text-align: left;
-  background: #161616;
+  background: rgba(22, 22, 22, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1.85rem;
@@ -17,7 +19,7 @@
 }
 
 html[data-theme='light'] .app-card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .app-card:hover {
@@ -68,13 +70,15 @@ html[data-theme='light'] .app-card {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
   gap: 0.4rem;
 }
 
 .app-publisher-pill {
   display: inline-flex;
   align-items: center;
+  max-width: 100%;
   font-size: 0.68rem;
   font-weight: 600;
   padding: 0.25rem 0.7rem;
@@ -82,12 +86,15 @@ html[data-theme='light'] .app-card {
   background: var(--bg-hover);
   color: var(--text-muted);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-version-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+  max-width: 100%;
   font-size: 0.68rem;
   font-weight: 600;
   padding: 0.25rem 0.7rem;
@@ -95,6 +102,8 @@ html[data-theme='light'] .app-card {
   background: var(--bg-hover);
   color: var(--text-dim);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-version-pill-icon {
@@ -111,6 +120,7 @@ html[data-theme='light'] .app-card {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 1.6rem;
   height: 1.6rem;
   border-radius: 50%;
@@ -230,8 +240,11 @@ html[data-theme='light'] .app-card {
 }
 
 .app-card--featured {
+  width: 19rem;
+  min-width: 19rem;
+  height: 16.5rem;
   padding: 1.4rem 1.35rem;
-  min-height: 11.5rem;
+  min-height: 16.5rem;
   border-color: hsl(var(--tag-hue, 210) 55% 55% / 0.35);
 }
 
@@ -242,4 +255,11 @@ html[data-theme='light'] .app-card {
 .app-card--featured .app-platforms {
   margin-top: 0;
   padding-top: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .app-card--featured {
+    width: 100%;
+    min-width: 0;
+  }
 }

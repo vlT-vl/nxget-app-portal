@@ -26,10 +26,11 @@ const App = () => {
   const [returnView, setReturnView] = useState('home')
   const [homeSplashDone, setHomeSplashDone] = useState(false)
   const [appsTitlePlayed, setAppsTitlePlayed] = useState(false)
+  const [discoverPlayed, setDiscoverPlayed] = useState(false)
   const homeSplashActive = view === 'home' && !homeSplashDone
 
-  const nav = (v, q = '') => {
-    if (v === 'apps') setAppsState({ ...INITIAL_APPS_STATE, query: q })
+  const nav = (v, q = '', focusSearch = false) => {
+    if (v === 'apps') setAppsState({ ...INITIAL_APPS_STATE, query: q, focusSearch })
     setView(v)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -62,6 +63,8 @@ const App = () => {
             onSelect={openDetail}
             splashAlreadyPlayed={homeSplashDone}
             onSplashDone={() => setHomeSplashDone(true)}
+            discoverAlreadyPlayed={discoverPlayed}
+            onDiscoverPlayed={() => setDiscoverPlayed(true)}
           />
         )}
         {view === 'apps'       && (

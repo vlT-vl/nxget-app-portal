@@ -12,7 +12,7 @@ const FEATURED_COUNT = 4
 const SPLASH_HOLD_MS = 1950
 const SPLASH_FADE_MS = 350
 
-const HomeView = ({ onNav, onSelect, splashAlreadyPlayed = false, onSplashDone }) => {
+const HomeView = ({ onNav, onSelect, splashAlreadyPlayed = false, onSplashDone, discoverAlreadyPlayed = false, onDiscoverPlayed }) => {
   const { t } = useLang()
   const { apps, status } = useCatalog()
   const newestIds = useNewestAppIds()
@@ -49,7 +49,13 @@ const HomeView = ({ onNav, onSelect, splashAlreadyPlayed = false, onSplashDone }
           </div>
         )}
 
-        <Hero appCount={apps.length} onSearch={q => onNav('apps', q)} />
+        <Hero
+          appCount={apps.length}
+          onSearch={() => onNav('apps', '', true)}
+          visible={splashPhase === 'done'}
+          discoverAlreadyPlayed={discoverAlreadyPlayed}
+          onDiscoverPlayed={onDiscoverPlayed}
+        />
       </div>
 
       {splashPhase === 'done' && (

@@ -43,7 +43,6 @@ const AboutView = ({ onOpenAbout }) => {
           <NxgetLogo className="about-logo" animated />
         </div>
 
-        <span className="hero-eyebrow">{t('about.eyebrow')}</span>
         <h1 className="about-title">{t('about.title')}</h1>
 
         {paragraphs.map((p, i) => (

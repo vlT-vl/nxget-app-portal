@@ -135,7 +135,7 @@
 
 .download-card-actions {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
   margin-bottom: 1.75rem;
@@ -243,4 +243,12 @@
 
 .license-btn-icon {
   font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .download-btn {
+    min-width: 96px;
+    flex: 1 1 calc((100% - 0.75rem) / 2);
+    max-width: calc((100% - 0.75rem) / 2);
+  }
 }

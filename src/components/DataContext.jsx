@@ -5,53 +5,56 @@ import { load as parseYaml } from 'js-yaml'
 import { isVoucherGated, VLT_CATEGORY } from '../lib/access.js'
 import { buildCategoryHues } from '../lib/tagColor.js'
 
-// ── Remote catalog (nxget.packages registry, single source of truth) ────
-
 const REGISTRY_BASE_URL = 'https://raw.githubusercontent.com/vlT-vl/nxget.packages/api'
 const CATALOG_REFRESH_MS = 60 * 60 * 1000
 
 const fetchCatalog = async () => {
   const index = await fetch(`${REGISTRY_BASE_URL}/v1/index.json`).then(r => r.json())
   const manifests = await Promise.all(
-    index.apps.map(entry => fetch(entry.manifest).then(r => r.text()).then(text => parseYaml(text)))
+    index.apps.map(async entry => {
+      const text = await fetch(entry.manifest).then(r => r.text())
+      return { ...parseYaml(text), __manifestText: text }
+    })
   )
   return manifests.sort((a, b) => a.name.localeCompare(b.name))
 }
 
-// ── Platform/arch/format labels ──────────────────────────────────────────
-
 export const PLATFORM_META = {
   windows: { label: 'Windows', icon: DiWindows, hue: 208 },
-  macos:   { label: 'macOS',   icon: SiApple, hue: 265 },
+  macos:   { label: 'macOS',   icon: SiApple, hue: 295 },
   linux:   { label: 'Linux',   icon: SiLinux, hue: 35 },
 }
 
 export const ARCH_LABEL = { x64: 'x64', arm64: 'ARM64', universal: 'Universal' }
+
+export const OS_VERSION_LABEL = { 14: 'Sonoma', 15: 'Sequoia', 26: 'Tahoe', 27: 'Golden Gate' }
 
 export const getPlatforms = downloads => Object.keys(downloads)
 
 export const getDownloadEntries = downloads =>
   Object.entries(downloads).flatMap(([platform, archMap]) => {
     const archKeys = Object.keys(archMap)
-    return archKeys.map(arch => {
-      const { url, format } = archMap[arch]
-      const parts = [PLATFORM_META[platform].label]
-      if (format) parts.push(format)
-      if (archKeys.length > 1) parts.push(ARCH_LABEL[arch])
+    return archKeys.flatMap(arch => {
+      const osMap = archMap[arch]
+      const osKeys = Object.keys(osMap)
+      return osKeys.map(osVersion => {
+        const { url, format } = osMap[osVersion]
+        const parts = [PLATFORM_META[platform].label]
+        if (format) parts.push(format)
+        if (archKeys.length > 1) parts.push(ARCH_LABEL[arch])
+        if (osVersion !== 'default') parts.push(`(${OS_VERSION_LABEL[osVersion] ?? osVersion})`)
 
-      return {
-        key: `${platform}-${arch}`,
-        platform,
-        arch,
-        url,
-        label: parts.join(' '),
-      }
+        return {
+          key: `${platform}-${arch}-${osVersion}`,
+          platform,
+          arch,
+          osVersion: osVersion === 'default' ? null : osVersion,
+          url,
+          label: parts.join(' '),
+        }
+      })
     })
   })
-
-// ── GitHub release resolution — persisted cache, ETag revalidation and a
-//    rate-limit breaker so a growing catalog can't burn through the 60
-//    req/hour anonymous api.github.com budget on every page reload ───────
 
 const RELEASE_CACHE_TTL_MS = 60 * 60 * 1000
 const RATE_LIMIT_FLOOR = 5
@@ -72,9 +75,7 @@ const readReleaseCache = repo => {
 const writeReleaseCache = (repo, releases, etag) => {
   try {
     localStorage.setItem(releaseCacheKey(repo), JSON.stringify({ releases, etag, fetchedAt: Date.now() }))
-  } catch {
-    // localStorage unavailable (privacy mode, quota) — the in-flight dedup below still helps this session.
-  }
+  } catch {}
 }
 
 const parseRepo = repo => {
@@ -144,23 +145,34 @@ const matrixDownloads = app => {
   const downloads = {}
   for (const rule of app.assets || []) {
     downloads[rule.platform] ??= {}
-    downloads[rule.platform][rule.arch] = { url: null, format: rule.format }
+    downloads[rule.platform][rule.arch] ??= {}
+    downloads[rule.platform][rule.arch][rule.osVersion ?? 'default'] = { url: null, format: rule.format }
   }
   return downloads
 }
 
 const manifestVersion = app => (app.version == null ? null : String(app.version))
 
+const compareVersions = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+
 const versionInfo = (app, releaseTag) => {
-  const version = releaseTag ?? manifestVersion(app)
-  const labels = Object.fromEntries(getDownloadEntries(matrixDownloads(app)).map(e => [e.key, e.label]))
-  const assetVersions = (app.assets || [])
-    .filter(rule => rule.version != null && String(rule.version) !== version)
-    .map(rule => ({
-      key: `${rule.platform}-${rule.arch}`,
-      label: labels[`${rule.platform}-${rule.arch}`],
-      version: String(rule.version),
-    }))
+  const platformVersions = new Map()
+  for (const rule of app.assets || []) {
+    if (rule.version == null) continue
+    const value = String(rule.version)
+    const current = platformVersions.get(rule.platform)
+    if (!current || compareVersions(value, current) > 0) platformVersions.set(rule.platform, value)
+  }
+
+  const distinctVersions = [...new Set(platformVersions.values())]
+  const version = releaseTag
+    ?? manifestVersion(app)
+    ?? (distinctVersions.length === 1 ? distinctVersions[0] : null)
+
+  const assetVersions = [...platformVersions.entries()]
+    .filter(([, v]) => v !== version)
+    .map(([platform, v]) => ({ key: platform, label: PLATFORM_META[platform].label, version: v }))
+
   return { version, assetVersions }
 }
 
@@ -174,7 +186,8 @@ export const resolveAppDownloads = async (app, { needVersion = true } = {}) => {
   for (const rule of app.assets || []) {
     if (!rule.url) continue
     downloads[rule.platform] ??= {}
-    downloads[rule.platform][rule.arch] = { url: rule.url, format: rule.format }
+    downloads[rule.platform][rule.arch] ??= {}
+    downloads[rule.platform][rule.arch][rule.osVersion ?? 'default'] = { url: rule.url, format: rule.format }
   }
 
   const matchRules = (app.assets || []).filter(rule => rule.match)
@@ -190,7 +203,8 @@ export const resolveAppDownloads = async (app, { needVersion = true } = {}) => {
     const rule = rules.find(r => r.regex.test(asset.name))
     if (!rule) continue
     downloads[rule.platform] ??= {}
-    downloads[rule.platform][rule.arch] = { url: asset.browser_download_url, format: rule.format }
+    downloads[rule.platform][rule.arch] ??= {}
+    downloads[rule.platform][rule.arch][rule.osVersion ?? 'default'] = { url: asset.browser_download_url, format: rule.format }
   }
 
   return { status: 'ready', downloads, ...versionInfo(app, release.tag_name) }
@@ -217,10 +231,6 @@ export const resolveAllDownloads = async list => {
   return Object.fromEntries(entries)
 }
 
-// ── Newest manifests — which apps were added/updated in the registry's
-//    last two commits, so Home can feature them instead of always the
-//    same ones. Shares the release fetcher's rate-limit breaker above. ──
-
 const NEWEST_REPO = 'vlT-vl/nxget.packages'
 const NEWEST_CACHE_KEY = 'vlt-nxget-newest-manifests'
 const NEWEST_CACHE_TTL_MS = 60 * 60 * 1000
@@ -237,9 +247,7 @@ const readNewestCache = () => {
 const writeNewestCache = ids => {
   try {
     localStorage.setItem(NEWEST_CACHE_KEY, JSON.stringify({ ids, fetchedAt: Date.now() }))
-  } catch {
-    // localStorage unavailable — nothing to fall back on beyond this session's in-memory result.
-  }
+  } catch {}
 }
 
 const trackRateLimit = res => {
@@ -291,7 +299,63 @@ const fetchNewestManifestIds = () => {
   return newestPromise
 }
 
-// ── Software license, read from the app's own repository ─────────────────
+const REGISTRY_STATUS_CACHE_KEY = 'vlt-nxget-registry-status'
+const REGISTRY_STATUS_TTL_MS = 60 * 60 * 1000
+
+const readRegistryStatusCache = () => {
+  try {
+    return JSON.parse(localStorage.getItem(REGISTRY_STATUS_CACHE_KEY))
+  } catch {
+    return null
+  }
+}
+
+const writeRegistryStatusCache = data => {
+  try {
+    localStorage.setItem(REGISTRY_STATUS_CACHE_KEY, JSON.stringify({ ...data, fetchedAt: Date.now() }))
+  } catch {}
+}
+
+let registryStatusPromise = null
+
+const fetchRegistryStatus = () => {
+  if (registryStatusPromise) return registryStatusPromise
+
+  registryStatusPromise = (async () => {
+    const cached = readRegistryStatusCache()
+    if (cached && Date.now() - cached.fetchedAt < REGISTRY_STATUS_TTL_MS) return cached
+    if (rateLimited) return cached ?? { online: true, updatedAt: null }
+
+    const res = await fetch(`https://api.github.com/repos/${NEWEST_REPO}/commits?sha=api&per_page=1`).catch(() => null)
+    if (!res) return cached ?? { online: false, updatedAt: null }
+    trackRateLimit(res)
+    if (!res.ok) return cached ?? { online: false, updatedAt: null }
+
+    const commits = await res.json().catch(() => null)
+    const data = { online: true, updatedAt: commits?.[0]?.commit?.author?.date ?? null }
+    writeRegistryStatusCache(data)
+    return data
+  })()
+
+  registryStatusPromise.finally(() => { registryStatusPromise = null })
+  return registryStatusPromise
+}
+
+export const useRegistryStatus = () => {
+  const [state, setState] = useState({ status: 'loading', updatedAt: null })
+
+  useEffect(() => {
+    let cancelled = false
+
+    fetchRegistryStatus().then(result => {
+      if (!cancelled) setState({ status: result.online ? 'online' : 'offline', updatedAt: result.updatedAt })
+    })
+
+    return () => { cancelled = true }
+  }, [])
+
+  return state
+}
 
 const LICENSE_FILES = ['LICENSE', 'LICENSE.md', 'LICENSE.txt', 'LICENCE', 'COPYING']
 const RAW_HOST = 'https://raw.githubusercontent.com'
@@ -339,10 +403,6 @@ export const resolveLicense = app => {
   promise.then(result => { if (result.status === 'missing' && result.transient) licenseCache.delete(app.id) })
   return promise
 }
-
-// ── DataContext — the app's single data-fetching component ──────────────
-//    Everything the app reads (catalog + resolved downloads/releases)
-//    flows through this file; no component fetches on its own.
 
 const DataContext = createContext(null)
 
@@ -412,9 +472,6 @@ export const useLicense = app => {
   return state
 }
 
-// Mappa categoria → tonalità, ricalcolata dal catalogo reale (mai un elenco
-// scritto a mano) così due categorie non prendono mai lo stesso colore; vlT
-// Software è esclusa perché usa sempre il proprio rosso a gradiente riservato.
 export const useCategoryHues = () => {
   const { apps } = useCatalog()
   return useMemo(() => {

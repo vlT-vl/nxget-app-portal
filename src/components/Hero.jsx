@@ -1,16 +1,55 @@
-import { useState } from 'react'
-import { HiOutlineSearch } from 'react-icons/hi'
+import { useEffect, useState } from 'react'
+import { HiOutlineArrowRight } from 'react-icons/hi2'
 import { useLang } from '../lib/uiText.js'
+import { useRegistryStatus } from './DataContext.jsx'
+import NxgetLogo from './NxgetLogo.jsx'
 import CatalogTower, { CATALOG_RESTART_MS } from './CatalogTower.jsx'
 import '../css/hero.css'
 
-const Hero = ({ onSearch, appCount }) => {
-  const { t } = useLang()
-  const [text, setText] = useState('')
+const COUNT_ANIM_MS = 900
 
-  const submit = e => {
-    e.preventDefault()
-    onSearch(text)
+const Hero = ({ onSearch, appCount, visible = true, discoverAlreadyPlayed = false, onDiscoverPlayed }) => {
+  const { t, lang } = useLang()
+  const [displayCount, setDisplayCount] = useState(0)
+  const [animateLogo, setAnimateLogo] = useState(false)
+  const registry = useRegistryStatus()
+
+  useEffect(() => {
+    if (!visible || discoverAlreadyPlayed || animateLogo) return
+    setAnimateLogo(true)
+    onDiscoverPlayed?.()
+  }, [visible, discoverAlreadyPlayed, animateLogo, onDiscoverPlayed])
+
+  useEffect(() => {
+    if (!visible || !appCount) {
+      setDisplayCount(0)
+      return
+    }
+
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setDisplayCount(appCount)
+      return
+    }
+
+    let current = 0
+    setDisplayCount(0)
+    const stepMs = Math.max(16, Math.round(COUNT_ANIM_MS / appCount))
+    const id = setInterval(() => {
+      current += 1
+      setDisplayCount(current)
+      if (current >= appCount) clearInterval(id)
+    }, stepMs)
+
+    return () => clearInterval(id)
+  }, [appCount, visible])
+
+  const formatUpdated = iso => {
+    const date = new Date(iso)
+    const locale = lang === 'it' ? 'it-IT' : 'en-US'
+    return {
+      date: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }).format(date),
+      time: new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(date),
+    }
   }
 
   return (
@@ -25,20 +64,33 @@ const Hero = ({ onSearch, appCount }) => {
             {t('hero.subtitle')}
           </p>
 
-          <form className="hero-search" onSubmit={submit} role="search">
-            <HiOutlineSearch className="hero-search-icon" />
-            <input
-              type="search"
-              className="hero-search-input"
-              placeholder={t('search.placeholder')}
-              value={text}
-              onChange={e => setText(e.target.value)}
-              aria-label={t('search.ariaLabel')}
-            />
-            <button type="submit" className="hero-search-btn">{t('search.button')}</button>
-          </form>
+          <div className="hero-discover-group">
+            <div className="hero-discover-anim">
+              <div className="hero-discover-wrap">
+                <div className="hero-discover-texture" />
+                <button type="button" className="hero-discover" onClick={onSearch}>
+                  <NxgetLogo iconOnly animated={animateLogo} className="hero-discover-logo" />
+                  <span className="hero-discover-label">{t('hero.discoverCta')}</span>
+                  <HiOutlineArrowRight className="hero-discover-arrow" />
+                </button>
+              </div>
+            </div>
 
-          <p className="hero-stat">{t('hero.stat', { count: appCount })}</p>
+            <div className="hero-stats">
+              <span className="hero-stat-pill">
+                <span className={`hero-stat-value${appCount === 0 ? ' hero-stat-value--loading' : ''}`}>{displayCount}</span>
+                <span className="hero-stat-label">{t('hero.stat.apps')}</span>
+              </span>
+
+              <span className={`hero-stat-pill hero-stat-pill--registry${registry.status === 'offline' ? ' hero-stat-pill--offline' : ''}`}>
+                <span className={`hero-live-dot${registry.status === 'offline' ? ' hero-live-dot--offline' : ''}`} />
+                <span className="hero-stat-label">
+                  {registry.status === 'offline' ? t('hero.stat.offline') : t('hero.stat.live')}
+                  {registry.updatedAt ? ` · ${t('hero.stat.updated', formatUpdated(registry.updatedAt))}` : ''}
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
 
         <CatalogTower className="hero-illustration" restartInterval={CATALOG_RESTART_MS} />

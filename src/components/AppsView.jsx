@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { HiOutlineSearch } from 'react-icons/hi'
 import { HiOutlineChevronDown } from 'react-icons/hi2'
+import { VscError } from 'react-icons/vsc'
 import AppCard from './AppCard.jsx'
 import CatalogTower, { CATALOG_RESTART_MS } from './CatalogTower.jsx'
 import FlowGlyph from './FlowGlyph.jsx'
+import NxgetLogo from './NxgetLogo.jsx'
 import { useCatalog, PLATFORM_META, getPlatforms, resolveAllDownloads, useCategoryHues } from './DataContext.jsx'
 import { getDescription } from '../lib/appText.js'
 import { VLT_CATEGORY } from '../lib/access.js'
@@ -12,16 +14,7 @@ import '../css/appsview.css'
 
 const PLATFORMS = Object.keys(PLATFORM_META)
 const PAGE_SIZE = 16
-const CATEGORY_CLOSE_MS = 180
-
-const AppsTitleIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect className="apps-icon-sq apps-icon-sq-1" x="2" y="2" width="7" height="7" rx="1.5" />
-    <rect className="apps-icon-sq apps-icon-sq-2" x="15" y="2" width="7" height="7" rx="1.5" />
-    <rect className="apps-icon-sq apps-icon-sq-3" x="2" y="15" width="7" height="7" rx="1.5" />
-    <rect className="apps-icon-sq apps-icon-sq-4" x="15" y="15" width="7" height="7" rx="1.5" />
-  </svg>
-)
+const MENU_CLOSE_MS = 180
 
 const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, onTitlePlayed }) => {
   const { t, lang } = useLang()
@@ -29,24 +22,62 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
   const categoryHues = useCategoryHues()
   const { query, platform, category, page } = state
   const [downloadsByApp, setDownloadsByApp] = useState(null)
+  const [platformOpen, setPlatformOpen] = useState(false)
+  const [platformClosing, setPlatformClosing] = useState(false)
   const [categoryOpen, setCategoryOpen] = useState(false)
   const [categoryClosing, setCategoryClosing] = useState(false)
   const viewRef = useRef(null)
+  const platformRef = useRef(null)
   const categoryRef = useRef(null)
+  const headerRef = useRef(null)
+  const searchInputRef = useRef(null)
   const [animateTitle] = useState(() => !titleAlreadyPlayed)
+  const [headerOut, setHeaderOut] = useState(false)
+  const [focusSearchOnMount] = useState(() => state.focusSearch)
 
   useEffect(() => {
     if (animateTitle) onTitlePlayed?.()
   }, [animateTitle, onTitlePlayed])
 
+  useEffect(() => {
+    if (focusSearchOnMount) searchInputRef.current?.focus()
+  }, [focusSearchOnMount])
+
+  useEffect(() => {
+    const node = headerRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') return undefined
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeaderOut(!entry.isIntersecting),
+      { rootMargin: '-90px 0px 0px 0px', threshold: 0 }
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  const closePlatformMenu = () => {
+    setPlatformClosing(true)
+    setTimeout(() => { setPlatformOpen(false); setPlatformClosing(false) }, MENU_CLOSE_MS)
+  }
+
   const closeCategoryMenu = () => {
     setCategoryClosing(true)
-    setTimeout(() => { setCategoryOpen(false); setCategoryClosing(false) }, CATEGORY_CLOSE_MS)
+    setTimeout(() => { setCategoryOpen(false); setCategoryClosing(false) }, MENU_CLOSE_MS)
+  }
+
+  const togglePlatformMenu = () => {
+    if (platformOpen) closePlatformMenu()
+    else {
+      if (categoryOpen) closeCategoryMenu()
+      setPlatformOpen(true)
+    }
   }
 
   const toggleCategoryMenu = () => {
     if (categoryOpen) closeCategoryMenu()
-    else setCategoryOpen(true)
+    else {
+      if (platformOpen) closePlatformMenu()
+      setCategoryOpen(true)
+    }
   }
 
   useEffect(() => {
@@ -57,18 +88,23 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
   }, [apps])
 
   useEffect(() => {
-    if (!categoryOpen) return undefined
+    if (!platformOpen && !categoryOpen) return undefined
     const onPointerDown = e => {
-      if (categoryRef.current && !categoryRef.current.contains(e.target)) closeCategoryMenu()
+      if (platformOpen && platformRef.current && !platformRef.current.contains(e.target)) closePlatformMenu()
+      if (categoryOpen && categoryRef.current && !categoryRef.current.contains(e.target)) closeCategoryMenu()
     }
-    const onKeyDown = e => { if (e.key === 'Escape') closeCategoryMenu() }
+    const onKeyDown = e => {
+      if (e.key !== 'Escape') return
+      if (platformOpen) closePlatformMenu()
+      if (categoryOpen) closeCategoryMenu()
+    }
     document.addEventListener('mousedown', onPointerDown)
     document.addEventListener('keydown', onKeyDown)
     return () => {
       document.removeEventListener('mousedown', onPointerDown)
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [categoryOpen])
+  }, [platformOpen, categoryOpen])
 
   const categories = useMemo(
     () => [...new Set(apps.map(app => app.category))].sort((a, b) => a.localeCompare(b)),
@@ -95,16 +131,33 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
   const firstIndex = (currentPage - 1) * PAGE_SIZE
   const visible = filtered.slice(firstIndex, firstIndex + PAGE_SIZE)
 
-  const changeQuery = value => onStateChange({ ...state, query: value, page: 1 })
-  const changePlatform = value => onStateChange({ ...state, platform: value, page: 1 })
+  const scrollToTop = () => {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    viewRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  }
+  const changeQuery = value => {
+    onStateChange({ ...state, query: value, page: 1 })
+    scrollToTop()
+  }
+  const changePlatform = value => {
+    onStateChange({ ...state, platform: value, page: 1 })
+    closePlatformMenu()
+  }
   const changeCategory = value => {
     onStateChange({ ...state, category: value, page: 1 })
     closeCategoryMenu()
   }
+  const hasActiveFilters = query.trim() !== '' || platform !== 'all' || category !== 'all'
+  const searchActive = query.trim() !== ''
+  const SelectedPlatformIcon = platform !== 'all' ? PLATFORM_META[platform].icon : null
+  const clearFilters = () => {
+    if (platformOpen) closePlatformMenu()
+    if (categoryOpen) closeCategoryMenu()
+    onStateChange({ ...state, query: '', platform: 'all', category: 'all', page: 1 })
+  }
   const goToPage = n => {
     onStateChange({ ...state, page: n })
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    viewRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    scrollToTop()
   }
 
   return (
@@ -112,18 +165,22 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
       <div className="apps-inner">
         <CatalogTower className="apps-bg" restartInterval={CATALOG_RESTART_MS} />
         <FlowGlyph className="apps-flow" />
-        <header className={`apps-page-header${animateTitle ? ' apps-page-header--animate' : ''}`}>
+        <NxgetLogo className="apps-parallax apps-parallax-diamond" iconOnly animated />
+        <header
+          ref={headerRef}
+          className={`apps-page-header${animateTitle ? ' apps-page-header--animate' : ''}${headerOut ? ' apps-page-header--out' : ''}`}
+        >
           <h1 className="section-title apps-title">
-            <AppsTitleIcon className="apps-title-icon" />
+            <NxgetLogo className="apps-title-logo" iconOnly animated={animateTitle} />
             <span className="apps-title-text">{t('apps.title')}</span>
           </h1>
-          <p className="section-subtitle">{t('apps.subtitle')}</p>
         </header>
 
         <div className="apps-controls">
-          <div className="apps-search">
+          <div className={`apps-search${searchActive ? ' apps-search--active' : ''}`}>
             <HiOutlineSearch className="apps-search-icon" />
             <input
+              ref={searchInputRef}
               type="search"
               className="apps-search-input"
               placeholder={t('search.placeholder')}
@@ -133,47 +190,78 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
             />
           </div>
 
-          <div className="apps-filters">
-            <div className="platform-filter">
+          <div className="apps-filter-groups">
+            <div className="apps-filter-menu" ref={platformRef}>
               <button
-                className={`platform-chip platform-chip--neutral${platform === 'all' ? ' platform-chip--active' : ''}`}
-                onClick={() => changePlatform('all')}
+                type="button"
+                className={`apps-filter-toggle${platform !== 'all' ? ' apps-filter-toggle--active' : ''}`}
+                onClick={togglePlatformMenu}
+                aria-haspopup="listbox"
+                aria-expanded={platformOpen && !platformClosing}
+                style={platform !== 'all' ? { '--tag-hue': PLATFORM_META[platform].hue } : undefined}
               >
-                {t('apps.filterAllPlatforms')}
+                {platform === 'all' ? t('apps.filterAllPlatforms') : (
+                  <>
+                    <SelectedPlatformIcon className="platform-chip-icon" aria-hidden="true" />
+                    {PLATFORM_META[platform].label}
+                  </>
+                )}
+                <HiOutlineChevronDown className="apps-filter-toggle-icon" />
               </button>
-              {PLATFORMS.map(p => {
-                const Icon = PLATFORM_META[p].icon
-                return (
+
+              {platformOpen && (
+                <div
+                  className={`apps-filter-stack${platformClosing ? ' apps-filter-stack--closing' : ''}`}
+                  role="listbox"
+                >
                   <button
-                    key={p}
-                    className={`platform-chip${platform === p ? ' platform-chip--active' : ''}`}
-                    style={{ '--tag-hue': PLATFORM_META[p].hue }}
-                    onClick={() => changePlatform(p)}
+                    type="button"
+                    role="option"
+                    aria-selected={platform === 'all'}
+                    className={`category-pill${platform === 'all' ? ' category-pill--active' : ''}`}
+                    style={{ '--i': 0 }}
+                    onClick={() => changePlatform('all')}
                   >
-                    <Icon className="platform-chip-icon" aria-hidden="true" />
-                    {PLATFORM_META[p].label}
+                    {t('apps.filterAllPlatforms')}
                   </button>
-                )
-              })}
+                  {PLATFORMS.map((p, i) => {
+                    const Icon = PLATFORM_META[p].icon
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        role="option"
+                        aria-selected={platform === p}
+                        className={`category-pill platform-pill${platform === p ? ' category-pill--active' : ''}`}
+                        style={{ '--tag-hue': PLATFORM_META[p].hue, '--i': i + 1 }}
+                        onClick={() => changePlatform(p)}
+                      >
+                        <Icon className="platform-chip-icon" aria-hidden="true" />
+                        {PLATFORM_META[p].label}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             {categories.length > 0 && (
-              <div className="category-filter" ref={categoryRef}>
+              <div className="apps-filter-menu" ref={categoryRef}>
                 <button
                   type="button"
-                  className={`category-filter-toggle${category !== 'all' ? ' category-filter-toggle--active' : ''}${category === VLT_CATEGORY ? ' category-filter-toggle--vlt' : ''}`}
+                  className={`apps-filter-toggle${category !== 'all' ? ' apps-filter-toggle--active' : ''}${category === VLT_CATEGORY ? ' apps-filter-toggle--vlt' : ''}`}
                   onClick={toggleCategoryMenu}
                   aria-haspopup="listbox"
                   aria-expanded={categoryOpen && !categoryClosing}
                   style={category !== 'all' && category !== VLT_CATEGORY ? { '--tag-hue': categoryHues.get(category) } : undefined}
                 >
                   {category === 'all' ? t('apps.filterCategory') : category}
-                  <HiOutlineChevronDown className="category-filter-icon" />
+                  <HiOutlineChevronDown className="apps-filter-toggle-icon" />
                 </button>
 
                 {categoryOpen && (
                   <div
-                    className={`category-filter-panel${categoryClosing ? ' category-filter-panel--closing' : ''}`}
+                    className={`apps-filter-stack apps-filter-stack--scroll${categoryClosing ? ' apps-filter-stack--closing' : ''}`}
                     role="listbox"
                   >
                     <button
@@ -181,18 +269,19 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
                       role="option"
                       aria-selected={category === 'all'}
                       className={`category-pill${category === 'all' ? ' category-pill--active' : ''}`}
+                      style={{ '--i': 0 }}
                       onClick={() => changeCategory('all')}
                     >
                       {t('apps.filterAll')}
                     </button>
-                    {categories.map(c => (
+                    {categories.map((c, i) => (
                       <button
                         key={c}
                         type="button"
                         role="option"
                         aria-selected={category === c}
                         className={`category-pill${c === VLT_CATEGORY ? ' category-pill--vlt' : ''}${category === c ? ' category-pill--active' : ''}`}
-                        style={c === VLT_CATEGORY ? undefined : { '--tag-hue': categoryHues.get(c) }}
+                        style={{ '--i': i + 1, ...(c === VLT_CATEGORY ? {} : { '--tag-hue': categoryHues.get(c) }) }}
                         onClick={() => changeCategory(c)}
                       >
                         {c}
@@ -202,6 +291,18 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
                 )}
               </div>
             )}
+
+            <button
+              type="button"
+              className={`filters-clear${hasActiveFilters ? ' filters-clear--visible' : ''}`}
+              onClick={clearFilters}
+              aria-label={t('apps.clearFilters')}
+              aria-hidden={!hasActiveFilters}
+              tabIndex={hasActiveFilters ? 0 : -1}
+            >
+              <VscError className="filters-clear-icon" aria-hidden="true" />
+              <span className="filters-clear-label">{t('apps.clearFilters')}</span>
+            </button>
           </div>
         </div>
 

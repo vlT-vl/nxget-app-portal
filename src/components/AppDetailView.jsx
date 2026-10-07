@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { dump as dumpYaml } from 'js-yaml'
 import { HiArrowLeft, HiOutlineChevronDown, HiOutlineCommandLine, HiOutlineClipboard, HiOutlineCheck, HiOutlineGlobeAlt } from 'react-icons/hi2'
 import { SiGithub } from 'react-icons/si'
 import AppCard from './AppCard.jsx'
@@ -20,6 +21,45 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
   const source = useMemo(() => (voucher.unlocked ? { ...app, unlocked: true } : app), [app, voucher.unlocked])
   const { status, downloads, version, assetVersions } = useAppDownloads(source)
   const history = useVersionHistory(source)
+  const [manifestChars, setManifestChars] = useState(0)
+  const manifestText = useMemo(() => {
+    if (app.__manifestText?.trim()) return app.__manifestText.trim()
+    const { __manifestText, ...manifest } = app
+    return dumpYaml(manifest, { noRefs: true, lineWidth: 90 }).trim()
+  }, [app])
+
+  useEffect(() => {
+    if (!manifestText) return undefined
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setManifestChars(manifestText.length)
+      return undefined
+    }
+
+    let timer
+    let current = 0
+    setManifestChars(0)
+
+    const typeNext = () => {
+      current = Math.min(manifestText.length, current + 1)
+      setManifestChars(current)
+
+      if (current === manifestText.length) {
+        timer = setTimeout(() => {
+          current = 0
+          setManifestChars(0)
+          timer = setTimeout(typeNext, 500)
+        }, 5000)
+        return
+      }
+
+      timer = setTimeout(typeNext, 18)
+    }
+
+    timer = setTimeout(typeNext, 500)
+    return () => clearTimeout(timer)
+  }, [manifestText])
+
+  const manifestTyping = `${manifestText.slice(0, manifestChars)}${manifestChars < manifestText.length ? '▋' : ''}`
 
   const command = `nxget install ${app.id}`
 
@@ -39,7 +79,16 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
 
   return (
     <section className="app-detail">
-      <div className="detail-inner">
+      <div className="detail-stage">
+        {manifestText && (
+          <div className="detail-manifest-parallax" aria-hidden="true">
+            <span className="detail-manifest-name">{app.id}.yaml</span>
+            <pre className="detail-manifest-code">{manifestTyping}</pre>
+          </div>
+        )}
+
+        <div className="detail-inner">
+          <div className="detail-content">
         <button className="detail-back" onClick={onBack}>
           <HiArrowLeft /> {t('appDetail.back')}
         </button>
@@ -138,9 +187,17 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
 
         {related.length > 0 && (
           <div className="detail-related">
-            <h2 className="section-title">{t('appDetail.moreIn', { category: app.category })}</h2>
+            <div className="detail-related-heading">
+              <h2 className="section-title">{t('appDetail.moreIn')}</h2>
+              <span
+                className={`detail-tag-pill${app.category === VLT_CATEGORY ? ' detail-tag-pill--vlt' : ''}`}
+                style={{ '--tag-hue': categoryHues.get(app.category) }}
+              >
+                {app.category}
+              </span>
+            </div>
             <div className="apps-grid">
-              {related.map((a, i) => <AppCard key={a.id} app={a} index={i} onSelect={onSelect} compact />)}
+              {related.map((a, i) => <AppCard key={a.id} app={a} index={i} onSelect={onSelect} featured />)}
             </div>
           </div>
         )}
@@ -183,6 +240,8 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
             )}
           </div>
         )}
+          </div>
+        </div>
       </div>
     </section>
   )

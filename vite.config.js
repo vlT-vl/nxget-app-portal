@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => {
 
     build: {
       minify:    'oxc',
+      cssMinify: false,
       sourcemap: false,
       rollupOptions: {
         output: {

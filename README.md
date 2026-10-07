@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.1--R021026-b23b3f?style=flat-square" alt="version"/>
+  <img src="https://img.shields.io/badge/version-0.1.1--R071026-b23b3f?style=flat-square" alt="version"/>
   <img src="https://img.shields.io/badge/react-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="react"/>
   <img src="https://img.shields.io/badge/vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="vite"/>
   <img src="https://img.shields.io/badge/deploy-GitHub%20Pages-black?style=flat-square&logo=github" alt="deploy"/>
@@ -32,7 +32,7 @@ A dedicated cross-platform CLI, able to install the same catalog's apps and cont
 | Section | Description |
 |---|---|
 | **Home** | Hero search and illustration — the catalog artwork (`CatalogTower`) is inlined and animated here: each building block of the drawing slides/fades into place in sequence, then the rain-thread beams and the glowing box lids keep a soft idle pulse; below it, a "What nxget is" section — a `DownloadFlow` diagram (remote registry → portal → download) beside a short paragraph linking to the "Why nxget" page for the details; then a "Featured" grid (5 to 8 smaller cards, a category-tinted border and platform icons that the regular catalog cards don't have) prioritizing whichever apps the registry's last two commits touched, topped up with other catalog apps to a minimum of five |
-| **Apps** | Full catalog in a wide grid (up to 5 cards per row on large screens), free-text search, a platform filter (Windows/macOS/Linux) and a category combobox (one color-coded pill per category actually in the catalog, next to the platform filter), with the same animated `CatalogTower` illustration used in the Home hero, fixed to the viewport on the left, partly behind the cards (dimmed to a faint silhouette so it doesn't compete with the grid, and — only on this page — replaying its whole entrance+idle sequence from scratch every 12 seconds instead of playing once). The list is paginated (`PAGE_SIZE` in `AppsView.jsx`, currently 15 apps per page): a dot pager where the current page is an animated oval, with an animated "Page X of Y" label below, shown only when there is more than one page. Search, both filters and current page are kept in memory while you open an app and come back (scroll position included), but not across a browser reload |
+| **Apps** | Full catalog in a wide grid (up to 5 cards per row on large screens), free-text search, a platform filter (Windows/macOS/Linux) and a category combobox (one color-coded pill per category actually in the catalog, next to the platform filter), with a "Clear filters" pill that appears once any filter or the search box is active and resets all of them at once, with the same animated `CatalogTower` illustration used in the Home hero, fixed to the viewport on the left, partly behind the cards (dimmed to a faint silhouette so it doesn't compete with the grid, and — only on this page — replaying its whole entrance+idle sequence from scratch every 12 seconds instead of playing once). The list is paginated (`PAGE_SIZE` in `AppsView.jsx`, currently 15 apps per page): a dot pager where the current page is an animated oval, with an animated "Page X of Y" label below, shown only when there is more than one page. Search, both filters and current page are kept in memory while you open an app and come back (scroll position included), but not across a browser reload |
 | **App detail** | Per-app page with live-resolved download buttons (one per platform *and* architecture when both exist), an "Information" card (extended bilingual description, publisher, current version, category/platform pills, app id) and, on wide screens next to it, a "Version history" card (up to 10 recent releases pulled from the same GitHub call, no extra request; only for apps with a `repo`). The current version comes from the latest release when the manifest has a `repo`, otherwise from the manifest's own `version` (with per-file overrides listed underneath when a platform differs). Also: compact related-apps cards from the same category, "View on GitHub" / "Visit website" links when available, and a `nxget install <id>` command box (CLI not out yet). A **License** button opens the software's license text, fetched from GitHub, and only appears when a license was actually retrieved. Apps in the `vlT Software` category (or marked `access: voucher`) show a disclaimer and locked download buttons until a valid download voucher is entered |
 | **Why nxget** | Value-proposition grid (cross-platform, hand-picked, official sources, open catalog, always up to date, CLI coming soon), a "How it works" walkthrough from the registry to the download button, and a "Details that matter" section of six icon cards (app details and version history, license button, search and platform filter, similar apps, official site/repo links, language and theme) |
 | **CLI** | Roadmap page for the planned command-line client: what `install` / `update` will do, a preview of the planned commands, a "Why a CLI" section, how it will reuse the same registry and release resolution as the portal, and a status board (registry and portal available, CLI planned) |
@@ -95,6 +95,8 @@ assets:
     format: DMG
     url: https://persistent.oaistatic.com/sidekick/public/ChatGPT.dmg
 ```
+
+A macOS asset can also carry `osVersion` (the OS major, e.g. `15` for Sequoia) for the rare vendor who compiles a genuinely different build per OS version instead of one file that runs on every supported system — the detail page then shows one download button per OS version, labeled with its codename, instead of silently keeping only one.
 
 Resolving a manifest into real download links is entirely the consumer's job. All of it happens in **`src/components/DataContext.jsx`**, the app's single data-fetching component (every other component reads data through it, none fetches on its own):
 
@@ -208,8 +210,8 @@ The repo has no committed `package-lock.json` yet, so the workflow runs a plain 
 | Field | Value |
 |---|---|
 | Version | 0.1.1 |
-| Build | R021026 |
-| Updated | 2 October 2026 |
+| Build | R071026 |
+| Updated | 7 October 2026 |
 
 ---
 
