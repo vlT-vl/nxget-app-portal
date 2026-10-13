@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.1--R071026-b23b3f?style=flat-square" alt="version"/>
+  <img src="https://img.shields.io/badge/version-0.1.2--R131026-b23b3f?style=flat-square" alt="version"/>
   <img src="https://img.shields.io/badge/react-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="react"/>
   <img src="https://img.shields.io/badge/vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="vite"/>
   <img src="https://img.shields.io/badge/deploy-GitHub%20Pages-black?style=flat-square&logo=github" alt="deploy"/>
@@ -21,7 +21,7 @@
 
 **nxget** is a frontend-only web app that works as a showcase for cross-platform software: a single hub to discover applications available on Windows, macOS and Linux, and reach the right download for your platform and CPU architecture.
 
-There is no application backend. The catalog itself lives in a separate public registry, [`nxget.packages`](https://github.com/vlT-vl/nxget.packages) — one hand-written YAML manifest per app. The portal fetches this registry live in the browser; where a manifest names a GitHub `repo`, the download links and the current version are resolved live from that repository's latest GitHub Release, and where it does not (closed-source apps) the manifest itself carries the fixed download links and the current `version`. Nothing about the catalog or its downloads is pre-computed, bundled or hardcoded into the portal, so both stay current without a new deploy.
+There is no application backend. The catalog itself lives in a separate public registry, [`nxget.packages`](https://github.com/vlT-vl/nxget.packages) — one hand-written YAML manifest per app. The portal fetches this registry live in the browser. Where a manifest names a GitHub `repo`, the registry publishes the latest stable release (its tag, download links and recent history) in `v1/releases.json`, which the portal reads in a single request; where it does not (closed-source apps), the manifest itself carries the fixed download links and the current `version`. Nothing about the catalog or its downloads is bundled or hardcoded into the portal, so both stay current without a new deploy.
 
 A dedicated cross-platform CLI, able to install the same catalog's apps and content straight from the terminal, is planned as the next step — see the in-app **CLI** page for the roadmap.
 
@@ -32,8 +32,8 @@ A dedicated cross-platform CLI, able to install the same catalog's apps and cont
 | Section | Description |
 |---|---|
 | **Home** | Hero search and illustration — the catalog artwork (`CatalogTower`) is inlined and animated here: each building block of the drawing slides/fades into place in sequence, then the rain-thread beams and the glowing box lids keep a soft idle pulse; below it, a "What nxget is" section — a `DownloadFlow` diagram (remote registry → portal → download) beside a short paragraph linking to the "Why nxget" page for the details; then a "Featured" grid (5 to 8 smaller cards, a category-tinted border and platform icons that the regular catalog cards don't have) prioritizing whichever apps the registry's last two commits touched, topped up with other catalog apps to a minimum of five |
-| **Apps** | Full catalog in a wide grid (up to 5 cards per row on large screens), free-text search, a platform filter (Windows/macOS/Linux) and a category combobox (one color-coded pill per category actually in the catalog, next to the platform filter), with a "Clear filters" pill that appears once any filter or the search box is active and resets all of them at once, with the same animated `CatalogTower` illustration used in the Home hero, fixed to the viewport on the left, partly behind the cards (dimmed to a faint silhouette so it doesn't compete with the grid, and — only on this page — replaying its whole entrance+idle sequence from scratch every 12 seconds instead of playing once). The list is paginated (`PAGE_SIZE` in `AppsView.jsx`, currently 15 apps per page): a dot pager where the current page is an animated oval, with an animated "Page X of Y" label below, shown only when there is more than one page. Search, both filters and current page are kept in memory while you open an app and come back (scroll position included), but not across a browser reload |
-| **App detail** | Per-app page with live-resolved download buttons (one per platform *and* architecture when both exist), an "Information" card (extended bilingual description, publisher, current version, category/platform pills, app id) and, on wide screens next to it, a "Version history" card (up to 10 recent releases pulled from the same GitHub call, no extra request; only for apps with a `repo`). The current version comes from the latest release when the manifest has a `repo`, otherwise from the manifest's own `version` (with per-file overrides listed underneath when a platform differs). Also: compact related-apps cards from the same category, "View on GitHub" / "Visit website" links when available, and a `nxget install <id>` command box (CLI not out yet). A **License** button opens the software's license text, fetched from GitHub, and only appears when a license was actually retrieved. Apps in the `vlT Software` category (or marked `access: voucher`) show a disclaimer and locked download buttons until a valid download voucher is entered |
+| **Apps** | Full catalog in a wide grid (up to 5 cards per row on large screens), free-text search, a platform filter (Windows/macOS/Linux) and a category combobox (one color-coded pill per category actually in the catalog, next to the platform filter), with a "Clear filters" pill that appears once any filter or the search box is active and resets all of them at once, with the same animated `CatalogTower` illustration used in the Home hero, fixed to the viewport on the left, partly behind the cards (dimmed to a faint silhouette so it doesn't compete with the grid, and — only on this page — replaying its whole entrance+idle sequence from scratch every 12 seconds instead of playing once). The list is paginated (`PAGE_SIZE` in `AppsView.jsx`, currently 16 apps per page): a dot pager where the current page is an animated oval, with an animated "Page X of Y" label below, shown only when there is more than one page. Search, both filters and current page are kept in memory while you open an app and come back (scroll position included), but not across a browser reload |
+| **App detail** | Per-app page with download buttons resolved from the registry (one per platform *and* architecture when both exist), an "Information" card (extended bilingual description, publisher, current version, category/platform pills, app id) and, on wide screens next to it, a "Version history" card (up to 10 recent releases, read from the registry's `v1/releases.json`; only for apps with a `repo`). The current version comes from the latest release when the manifest has a `repo`, otherwise from the manifest's own `version` (with per-file overrides listed underneath when a platform differs). Also: compact related-apps cards from the same category, "View on GitHub" / "Visit website" links when available, and a `nxget install <id>` command box (CLI not out yet). A **License** button opens the software's license text, fetched from GitHub, and only appears when a license was actually retrieved. Apps in the `vlT Software` category (or marked `access: voucher`) show a disclaimer and locked download buttons until a valid download voucher is entered |
 | **Why nxget** | Value-proposition grid (cross-platform, hand-picked, official sources, open catalog, always up to date, CLI coming soon), a "How it works" walkthrough from the registry to the download button, and a "Details that matter" section of six icon cards (app details and version history, license button, search and platform filter, similar apps, official site/repo links, language and theme) |
 | **CLI** | Roadmap page for the planned command-line client: what `install` / `update` will do, a preview of the planned commands, a "Why a CLI" section, how it will reuse the same registry and release resolution as the portal, and a status board (registry and portal available, CLI planned) |
 | **About** | Project origin story (bilingual, loaded from an external text file), with a credit link to Keivan Beigi's blog, an "INFO" pill that opens the same version/build/stack modal as the footer, and a brand card above the pills with the animated vlT logo (a link to lorenzoveronesi.it) and the copyright line (the animation starts when the card scrolls into view) |
@@ -43,6 +43,7 @@ A dedicated cross-platform CLI, able to install the same catalog's apps and cont
 - Light/dark theme with preference saved in `localStorage` (key `vlt-theme`), following the system preference by default
 - IT/EN language switcher in the navbar with preference saved in `localStorage` (key `vlt-lang`) — **Italian by default**
 - `nxget` wordmark as an inline SVG (`NxgetLogo`), theme-aware via a CSS custom property so it stays legible on both themes independent of the OS preference
+- Self-hosted Open Sans for the portal UI (Light 300, Regular 400, Semibold 600 and Bold 700, under the Apache License 2.0), loaded from `src/res/fonts/` through `src/css/fonts.css`. The navbar menu items and its language selector remain in Montserrat from Google Fonts by user choice. CSS weight 500 falls back to Regular 400. The JetBrains Mono / Courier New stack used for YAML manifests, vouchers and licenses is unchanged
 - Category and platform pills color-coded (category pills also on the catalog cards): each platform has a fixed hue (Windows blue, macOS violet, Linux amber), every other tag (category) gets a hue derived from a hash of its text (the palette has no red: red with the gradient is reserved to the `vlT Software` category) — same formula also used for the catalog card logo fallback badge
 - Restrained entrance animations throughout (hero, cards, navbar, view transitions), fully disabled under `prefers-reduced-motion`
 - Responsive layout down to small phones
@@ -98,17 +99,17 @@ assets:
 
 A macOS asset can also carry `osVersion` (the OS major, e.g. `15` for Sequoia) for the rare vendor who compiles a genuinely different build per OS version instead of one file that runs on every supported system — the detail page then shows one download button per OS version, labeled with its codename, instead of silently keeping only one.
 
-Resolving a manifest into real download links is entirely the consumer's job. All of it happens in **`src/components/DataContext.jsx`**, the app's single data-fetching component (every other component reads data through it, none fetches on its own):
+The portal turns the registry into download entries. All of it happens in **`src/components/DataContext.jsx`**, the app's single data-fetching component (every other component reads data through it, none fetches on its own):
 
 1. On first mount, fetches `nxget.packages`' `v1/index.json` (discovery: id/name/publisher/category + a link to each app's manifest), then every manifest in parallel — this becomes the app catalog, refreshed automatically every hour while the portal stays open, so new or edited apps show up without a new deploy.
 2. Builds a download entry directly from every asset that carries a fixed `url` — no network call involved.
-3. If the manifest has a `repo`, calls `https://api.github.com/repos/<owner>/<repo>/releases?per_page=10`, honoring `releasePrefix` when present, and picks the most recent non-prerelease, non-draft release. That release gives the **current version** (its tag) and, for assets that carry `match`, the download files; the same list also feeds the "Version history" panel, so showing everything costs a single request per repo. The Apps list only needs downloads, so for an app with a `repo` but only fixed-`url` assets it does not contact GitHub at all.
-4. Matches each release asset's filename against the manifest's own `match` rules (a case-insensitive regular expression) to resolve the real platform, architecture and package format for that file, and builds one download button per matched combination — never a single generic button standing in for several real options.
+3. If the manifest has a `repo`, reads that app's entry in the registry's `v1/releases.json`, which is downloaded once for the whole catalog rather than once per app. The entry gives the **current version** (the tag of the latest stable release), the download files already matched by the registry against the manifest's `match` rules, and the recent releases for the "Version history" panel. No GitHub API call is needed for these apps. An app with no entry in `releases.json` (for example a private repository) simply has no release data, like an app without a `repo`.
+4. Builds one download button per matched file (platform, architecture and package format, and `osVersion` where the app pins one) — never a single generic button standing in for several real options.
 5. If the manifest has **no** `repo`, there is nothing to poll: the current version is the manifest's own `version` (a quoted string; an asset can carry its own `version` when it differs, and when the app-level one is omitted — Microsoft 365 — each platform's is listed). It is also the fallback if a release can't be read. There is no version history for these apps.
 
 Apps resolved via `match` need a GitHub repository that actually publishes install binaries as release assets — not every open-source project qualifies (many develop on GitLab, Gerrit, or their own infrastructure, or don't attach binaries to GitHub Releases at all). A `url` asset has no such requirement, at the cost of a version history: with no Release to poll there is only a *current* version, which the manifest states itself.
 
-> The unauthenticated GitHub API is rate-limited to 60 requests/hour per IP — a real constraint once the catalog can grow past a handful of apps without a portal redeploy. `DataContext.jsx` persists each repo's resolved releases (trimmed to the few fields the portal actually uses, so the cache stays small enough for the `localStorage` quota) in `localStorage` for an hour (matching the catalog's own refresh interval), revalidates with a conditional `If-None-Match` request once that expires (a `304` response doesn't count against the limit), and backs off entirely once GitHub's `X-RateLimit-Remaining` header runs low — falling back to whatever's cached, or to a "View releases on GitHub" link. This keeps a full page reload from re-triggering a fresh burst of requests, but it's still a per-IP budget shared by everyone behind the same network; a future backend/proxy remains the right place to lift the ceiling entirely for heavier traffic.
+> The unauthenticated GitHub API is rate-limited to 60 requests/hour per IP. For that reason the catalog's releases are read from the registry's `v1/releases.json` instead of `api.github.com`: one request per visit, cached in `localStorage` for an hour (matching the catalog's own refresh interval), and the expired copy is still used if the network fails. What still calls GitHub directly is the registry status and the list of newest apps, so a cold visit makes about 4 requests instead of about 54 (one per repository). The GitHub budget is still per IP and shared by everyone behind the same network; a future backend/proxy remains the right place to lift the ceiling entirely for heavier traffic.
 
 ---
 
@@ -134,10 +135,10 @@ nxget-app-portal/
 ├── package.json
 ├── .env                           # VITE_BASE_URL, VITE_GITHUB_URL, VITE_VOUCHER_PUBLIC_KEY (public key, committed)
 └── src/
-    ├── main.jsx                   # entry point, wraps <App/> in <DataProvider> + <LanguageProvider>
+    ├── main.jsx                   # entry point; imports css/fonts.css first and wraps <App/> in the providers
     ├── components/
     │   ├── App.jsx                 # view router (state machine) + footer
-    │   ├── DataContext.jsx         # single data-fetching component: nxget.packages catalog + GitHub release resolution
+    │   ├── DataContext.jsx         # single data-fetching component: nxget.packages catalog + v1/releases.json
     │   ├── Navbar.jsx / Theme.jsx / LanguageToggle.jsx
     │   ├── HomeView.jsx / Hero.jsx / DownloadFlow.jsx / CatalogTower.jsx / FeaturesView.jsx / CliView.jsx
     │   ├── AppsView.jsx / AppCard.jsx
@@ -154,8 +155,10 @@ nxget-app-portal/
     │   ├── voucherStore.js         # useVoucher hook + localStorage persistence
     │   └── theme.js                # light/dark preference
     ├── content/about.{it,en}.txt   # About page copy, one file per language
-    ├── css/                        # one stylesheet per component
-    └── res/                        # nxget-logo.svg, nxget-icon.svg, nxget-download-flow.svg, catalog.svg, vltcube.svg
+    ├── css/                        # component styles + fonts.css (self-hosted Open Sans @font-face rules)
+    └── res/
+        ├── fonts/                  # four Open Sans TTF files + Apache LICENSE.txt
+        └── *.svg                   # nxget-logo, nxget-icon, nxget-download-flow, catalog, vltcube
 ```
 
 ---
@@ -167,12 +170,12 @@ nxget-app-portal/
 | `react` | ^19.3.0 | UI framework |
 | `react-dom` | ^19.3.0 | DOM renderer |
 | `react-icons` | ^5.7.0 | Icon library |
-| `js-yaml` | ^4.1.0 | Parses the YAML manifests fetched at runtime from `nxget.packages` |
+| `js-yaml` | ^5.4.3 | Parses the YAML manifests fetched at runtime from `nxget.packages` |
 
 | Dev | Version | Purpose |
 |---|---|---|
-| `vite` | ^8.3.0 | Build tool + dev server |
-| `@vitejs/plugin-react` | ^6.1.1 | React Fast Refresh + JSX |
+| `vite` | ^8.3.4 | Build tool + dev server |
+| `@vitejs/plugin-react` | ^6.1.2 | React Fast Refresh + JSX |
 
 ---
 
@@ -209,9 +212,9 @@ The repo has no committed `package-lock.json` yet, so the workflow runs a plain 
 
 | Field | Value |
 |---|---|
-| Version | 0.1.1 |
-| Build | R071026 |
-| Updated | 7 October 2026 |
+| Version | 0.1.2 |
+| Build | R131026 |
+| Updated | 13 October 2026 |
 
 ---
 

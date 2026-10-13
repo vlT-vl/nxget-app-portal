@@ -40,7 +40,9 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
   }, [animateTitle, onTitlePlayed])
 
   useEffect(() => {
-    if (focusSearchOnMount) searchInputRef.current?.focus()
+    if (!focusSearchOnMount) return
+    searchInputRef.current?.focus({ preventScroll: true })
+    onStateChange(prev => ({ ...prev, focusSearch: false }))
   }, [focusSearchOnMount])
 
   useEffect(() => {
@@ -177,7 +179,7 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
         </header>
 
         <div className="apps-controls">
-          <div className={`apps-search${searchActive ? ' apps-search--active' : ''}`}>
+          <label className={`apps-search${searchActive ? ' apps-search--active' : ''}`}>
             <HiOutlineSearch className="apps-search-icon" />
             <input
               ref={searchInputRef}
@@ -188,7 +190,7 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
               onChange={e => changeQuery(e.target.value)}
               aria-label={t('search.ariaLabel')}
             />
-          </div>
+          </label>
 
           <div className="apps-filter-groups">
             <div className="apps-filter-menu" ref={platformRef}>

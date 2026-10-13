@@ -30,7 +30,7 @@
 }
 
 .cli-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: clamp(1.6rem, 3.6vw, 2.2rem);
   font-weight: 600;
   color: var(--text);
@@ -75,7 +75,7 @@
 }
 
 .cli-roadmap-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text);

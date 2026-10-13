@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import './css/fonts.css'
 import './css/index.css'
 import App from './components/App.jsx'
 import { DataProvider } from './components/DataContext.jsx'

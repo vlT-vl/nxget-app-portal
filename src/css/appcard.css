@@ -59,7 +59,7 @@ html[data-theme='light'] .app-card {
   justify-content: center;
   width: 100%;
   height: 100%;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.8rem;
   font-weight: 600;
   color: hsl(var(--badge-hue) 70% 40%);
@@ -160,7 +160,7 @@ html[data-theme='light'] .app-card {
   overflow: visible;
   white-space: nowrap;
   text-align: center;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.3;

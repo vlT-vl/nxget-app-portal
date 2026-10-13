@@ -43,7 +43,7 @@
 }
 
 .feature-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text);
@@ -99,7 +99,7 @@
   border-radius: 50%;
   background: var(--accent-soft);
   color: var(--accent);
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
 }

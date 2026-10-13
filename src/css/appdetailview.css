@@ -88,21 +88,39 @@ html[data-theme='light'] .detail-manifest-parallax {
 .detail-back {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  background: none;
-  border: none;
-  padding: 0;
+  gap: 0.35rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 0.28rem 0.8rem 0.28rem 0.6rem;
   margin-bottom: 1.75rem;
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
   animation: fadeInUp 0.4s ease both;
 }
 
+.detail-back svg {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
 .detail-back:hover {
-  color: var(--text);
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+.detail-back:hover svg {
+  transform: translateX(-3px);
+}
+
+.detail-back:focus-visible {
+  outline: 2px solid var(--text-muted);
+  outline-offset: 2px;
 }
 
 .detail-soon-pill {
@@ -216,7 +234,7 @@ html[data-theme='light'] .detail-command {
 }
 
 .detail-info-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text);

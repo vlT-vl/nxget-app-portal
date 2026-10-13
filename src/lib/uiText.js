@@ -85,8 +85,8 @@ export const uiText = {
       howSubtitle: 'Dal registry al pulsante di download, passo per passo.',
       steps: [
         { title: 'Il catalogo arriva dal registry', text: "All'apertura il portale legge l'indice di nxget.packages, poi il manifest di ogni app, e lo rilegge da solo ogni ora finché resta aperto. Aggiungere o correggere un'app significa modificare un manifest, non ripubblicare il portale." },
-        { title: 'Le release si leggono dal vivo', text: 'Per le app con una repo GitHub il portale interroga le release più recenti, escludendo bozze e prerelease, e ne ricava versione e cronologia. Il software chiuso ha invece un link di download fisso nel manifest: nessuna chiamata di rete.' },
-        { title: 'Ogni file viene riconosciuto', text: 'Il nome di ogni file della release viene confrontato con le regole del manifest per stabilire piattaforma, architettura e formato. Nascono così pulsanti distinti, come Windows EXE x64 o Linux AppImage ARM64, mai un unico pulsante generico.' },
+        { title: 'Le release arrivano dal registry', text: 'Per le app con una repo GitHub il registry pubblica un indice delle release, con ultima versione stabile (bozze e prerelease escluse) e cronologia, che il portale legge con una sola richiesta invece di interrogare GitHub app per app. Il software chiuso ha invece un link di download fisso nel manifest.' },
+        { title: 'Ogni file viene riconosciuto', text: 'Il registry confronta il nome di ogni file della release con le regole del manifest per stabilire piattaforma, architettura e formato. Nascono così pulsanti distinti, come Windows EXE x64 o Linux AppImage ARM64, mai un unico pulsante generico.' },
         { title: 'Scarichi dalla fonte', text: 'Il clic porta direttamente al file pubblicato dallo sviluppatore. Il portale non ospita i programmi e non li fa passare da server propri: è una vetrina, non un mirror.' },
       ],
       knowTitle: 'Dettagli che contano',
@@ -310,8 +310,8 @@ export const uiText = {
       howSubtitle: 'From the registry to the download button, step by step.',
       steps: [
         { title: 'The catalog comes from the registry', text: "On load the portal reads the nxget.packages index, then each app's manifest, and re-reads it on its own every hour while it stays open. Adding or fixing an app means editing a manifest, not redeploying the portal." },
-        { title: 'Releases are read live', text: "For apps with a GitHub repo the portal queries the latest releases, skipping drafts and prereleases, and derives version and history from them. Closed-source software instead has a fixed download link in its manifest: no network call at all." },
-        { title: 'Every file is recognized', text: "Each release file name is matched against the manifest's rules to work out platform, architecture and format. That's how you get distinct buttons like Windows EXE x64 or Linux AppImage ARM64, never a single generic one." },
+        { title: 'Releases come from the registry', text: "For apps with a GitHub repo the registry publishes a release index, with the latest stable version (drafts and prereleases skipped) and the history, which the portal reads in a single request instead of querying GitHub app by app. Closed-source software instead has a fixed download link in its manifest." },
+        { title: 'Every file is recognized', text: "The registry matches each release file name against the manifest's rules to work out platform, architecture and format. That's how you get distinct buttons like Windows EXE x64 or Linux AppImage ARM64, never a single generic one." },
         { title: 'You download from the source', text: "The click goes straight to the file the developer published. The portal doesn't host the programs and doesn't route them through its own servers: it's a showcase, not a mirror." },
       ],
       knowTitle: 'Details that matter',

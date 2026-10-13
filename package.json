@@ -1,8 +1,8 @@
 {
   "name": "nxget",
-  "version": "0.1.1",
-  "build": "R071026",
-  "updated": "7 October 2026",
+  "version": "0.1.2",
+  "build": "R131026",
+  "updated": "13 October 2026",
   "ibuild": "R110926",
   "description": "nxget app portal",
   "author": "Veronesi Lorenzo © 2026 vlT - vl.TECH",
@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.1.2",
-    "vite": "^8.3.3"
+    "vite": "^8.3.4"
   }
 }

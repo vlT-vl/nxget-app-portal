@@ -2,6 +2,44 @@
 
 Le funzionalità principali del portale, in ordine cronologico inverso.
 
+## 2026-10-13 — 0.1.2 / R131026
+
+- Il catalogo non legge più le release direttamente da GitHub: legge il file
+  `v1/releases.json` del registro `nxget.packages`, con una sola richiesta per
+  visita, cache locale di un'ora e uso della cache anche scaduta se la rete
+  fallisce. Rimossa la risoluzione delle release repo per repo (selezione
+  della release, regex e cache per repo). Restano le chiamate dirette
+  all'API GitHub per lo stato del registro e per le app nuove: una visita a freddo passa da 54 a 4 richieste, sul limite di
+  60 richieste/ora per IP.
+- Caricamento del catalogo più robusto: controllo dello stato HTTP e
+  `Promise.allSettled`, così un manifest danneggiato non blocca più l'intero
+  catalogo.
+- Risolto il caso Thaw, in cui nelle ultime 10 release non c'era nessuna
+  release stabile.
+- Barra di ricerca della pagina Applicazioni più grande (come i filtri accanto)
+  e cliccabile in ogni punto, così non serve più un secondo clic per
+  attivarla. Arrivando con «Scopri le app» dalla Home è già attiva e pronta a
+  digitare; con la navbar o tornando da un dettaglio non prende il focus. Il
+  bordo sinistro non presenta più la fascia scura: negli stati aperti il tema
+  chiaro conserva un bordo glass luminoso e la pillola non crea più un ritaglio
+  arrotondato interno durante il compositing.
+- Rimossi dal portale gli ultimi residui della logica di match degli asset,
+  ora a carico del registro, e aggiornati i testi «Come funziona» che la
+  descrivevano ancora.
+- La pillola del registro in Home non dipende più dalla quota dell'API GitHub
+  per sapere se il registro è raggiungibile: se la chiamata ai commit fallisce
+  (per esempio 403 a quota esaurita) il portale verifica il registro con una
+  richiesta a raw.githubusercontent.com, mostra «attivo» se risponde e conserva
+  l'ultima data nota. L'ultimo aggiornamento resta quello dell'ultimo commit
+  del branch `api`, letto dalla UI come prima.
+- Il pulsante «Indietro» nella card di dettaglio è ora una pillola più grande,
+  con testo pieno, bordo sempre visibile e sfondo neutro al passaggio del mouse.
+- Il portale usa ora Open Sans locale nei pesi 300, 400, 600 e 700 con licenza
+  Apache 2.0 in tutta l'interfaccia, tranne menu e selettore della lingua nella
+  navbar, che restano in Montserrat da Google Fonts per scelta dell'utente. Il
+  peso 500 continua a usare il fallback Regular 400; i caratteri monospaziati
+  di manifest YAML, voucher e licenze restano invariati.
+
 ## 2026-10-07
 
 - La Home ha ora un pulsante animato "Scopri le app" (logo nxget + freccia)

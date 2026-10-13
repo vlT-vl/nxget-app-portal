@@ -1,6 +1,5 @@
 /* vltlogo.css                                                               */
 /*****************************************************************************/
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
 
 .vlt-logo {
   --cube-w: 1.42rem;
@@ -23,7 +22,7 @@
 }
 
 .vlt-text {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: calc(var(--cube-w) * 0.58);
   font-weight: 600;
   letter-spacing: 4px;

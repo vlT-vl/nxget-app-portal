@@ -69,7 +69,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: clamp(1.35rem, 3vw, 1.75rem);
   font-weight: 600;
   color: var(--text);

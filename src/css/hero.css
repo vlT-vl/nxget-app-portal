@@ -33,7 +33,7 @@
 }
 
 .hero-eyebrow {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 1.4px;
@@ -44,7 +44,7 @@
 }
 
 .hero-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: clamp(1.9rem, 5vw, 3.1rem);
   font-weight: 600;
   line-height: 1.2;
@@ -201,7 +201,7 @@ html[data-theme='dark'] .hero-discover-logo {
 
 .hero-stat-value {
   min-width: 2ch;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: 700;
   font-size: 0.88rem;
   color: var(--text);

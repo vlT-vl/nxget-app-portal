@@ -9,13 +9,21 @@ const REGISTRY_BASE_URL = 'https://raw.githubusercontent.com/vlT-vl/nxget.packag
 const CATALOG_REFRESH_MS = 60 * 60 * 1000
 
 const fetchCatalog = async () => {
-  const index = await fetch(`${REGISTRY_BASE_URL}/v1/index.json`).then(r => r.json())
-  const manifests = await Promise.all(
+  const indexRes = await fetch(`${REGISTRY_BASE_URL}/v1/index.json`)
+  if (!indexRes.ok) throw new Error(`index.json: HTTP ${indexRes.status}`)
+  const index = await indexRes.json()
+  const results = await Promise.allSettled(
     index.apps.map(async entry => {
-      const text = await fetch(entry.manifest).then(r => r.text())
-      return { ...parseYaml(text), __manifestText: text }
+      const res = await fetch(entry.manifest)
+      if (!res.ok) throw new Error(`manifest: HTTP ${res.status}`)
+      const text = await res.text()
+      const manifest = parseYaml(text)
+      if (typeof manifest?.name !== 'string') throw new Error('manifest: invalid')
+      return { ...manifest, __manifestText: text }
     })
   )
+  const manifests = results.filter(r => r.status === 'fulfilled').map(r => r.value)
+  if (!manifests.length && index.apps.length) throw new Error('no manifest could be loaded')
   return manifests.sort((a, b) => a.name.localeCompare(b.name))
 }
 
@@ -56,25 +64,24 @@ export const getDownloadEntries = downloads =>
     })
   })
 
-const RELEASE_CACHE_TTL_MS = 60 * 60 * 1000
+const SNAPSHOT_CACHE_KEY = 'vlt-nxget-releases-snapshot'
+const SNAPSHOT_TTL_MS = 60 * 60 * 1000
 const RATE_LIMIT_FLOOR = 5
 
-const inFlight = new Map()
 let rateLimited = false
+let snapshotPromise = null
 
-const releaseCacheKey = repo => `vlt-nxget-releases:${repo}`
-
-const readReleaseCache = repo => {
+const readSnapshotCache = () => {
   try {
-    return JSON.parse(localStorage.getItem(releaseCacheKey(repo)))
+    return JSON.parse(localStorage.getItem(SNAPSHOT_CACHE_KEY))
   } catch {
     return null
   }
 }
 
-const writeReleaseCache = (repo, releases, etag) => {
+const writeSnapshotCache = snapshot => {
   try {
-    localStorage.setItem(releaseCacheKey(repo), JSON.stringify({ releases, etag, fetchedAt: Date.now() }))
+    localStorage.setItem(SNAPSHOT_CACHE_KEY, JSON.stringify({ snapshot, fetchedAt: Date.now() }))
   } catch {}
 }
 
@@ -83,63 +90,26 @@ const parseRepo = repo => {
   return match ? { owner: match[1], name: match[2] } : null
 }
 
-const trimRelease = r => ({
-  tag_name: r.tag_name,
-  name: r.name,
-  published_at: r.published_at,
-  html_url: r.html_url,
-  prerelease: r.prerelease,
-  draft: r.draft,
-  assets: (r.assets || []).map(a => ({ name: a.name, browser_download_url: a.browser_download_url })),
-})
+const fetchSnapshot = () => {
+  if (snapshotPromise) return snapshotPromise
 
-const fetchReleases = repo => {
-  if (inFlight.has(repo)) return inFlight.get(repo)
+  snapshotPromise = (async () => {
+    const cached = readSnapshotCache()
+    if (cached?.snapshot && Date.now() - cached.fetchedAt < SNAPSHOT_TTL_MS) return cached.snapshot
 
-  const promise = (async () => {
-    const parsed = parseRepo(repo)
-    if (!parsed) return null
+    const res = await fetch(`${REGISTRY_BASE_URL}/v1/releases.json`).catch(() => null)
+    if (!res || !res.ok) return cached?.snapshot ?? { apps: {} }
 
-    const cached = readReleaseCache(repo)
-    if (cached && Date.now() - cached.fetchedAt < RELEASE_CACHE_TTL_MS) return cached.releases
+    const snapshot = await res.json().catch(() => null)
+    if (!snapshot?.apps) return cached?.snapshot ?? { apps: {} }
 
-    if (rateLimited) return cached?.releases ?? null
-
-    const headers = {}
-    if (cached?.etag) headers['If-None-Match'] = cached.etag
-
-    let res
-    try {
-      res = await fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.name}/releases?per_page=10`, { headers })
-    } catch {
-      return cached?.releases ?? null
-    }
-
-    const remaining = Number(res.headers.get('x-ratelimit-remaining'))
-    if (!Number.isNaN(remaining) && remaining <= RATE_LIMIT_FLOOR) rateLimited = true
-
-    if (res.status === 304 && cached) {
-      writeReleaseCache(repo, cached.releases, cached.etag)
-      return cached.releases
-    }
-    if (res.status === 403 || res.status === 429) {
-      rateLimited = true
-      return cached?.releases ?? null
-    }
-    if (!res.ok) return cached?.releases ?? null
-
-    const releases = (await res.json()).map(trimRelease)
-    writeReleaseCache(repo, releases, res.headers.get('etag'))
-    return releases
+    writeSnapshotCache(snapshot)
+    return snapshot
   })()
 
-  inFlight.set(repo, promise)
-  promise.finally(() => inFlight.delete(repo))
-  return promise
+  snapshotPromise.then(() => { snapshotPromise = null })
+  return snapshotPromise
 }
-
-const pickRelease = (releases, app) =>
-  releases?.find(r => !r.prerelease && !r.draft && (!app.releasePrefix || r.tag_name.startsWith(app.releasePrefix)))
 
 const matrixDownloads = app => {
   const downloads = {}
@@ -176,10 +146,11 @@ const versionInfo = (app, releaseTag) => {
   return { version, assetVersions }
 }
 
-export const resolveAppDownloads = async (app, { needVersion = true } = {}) => {
+export const resolveAppDownloads = async app => {
+  const entry = app.repo ? (await fetchSnapshot()).apps[app.id] : null
+
   if (isVoucherGated(app) && !app.unlocked) {
-    const release = app.repo ? pickRelease(await fetchReleases(app.repo), app) : null
-    return { status: 'locked', downloads: matrixDownloads(app), ...versionInfo(app, release?.tag_name) }
+    return { status: 'locked', downloads: matrixDownloads(app), ...versionInfo(app, entry?.tag) }
   }
 
   const downloads = {}
@@ -190,43 +161,38 @@ export const resolveAppDownloads = async (app, { needVersion = true } = {}) => {
     downloads[rule.platform][rule.arch][rule.osVersion ?? 'default'] = { url: rule.url, format: rule.format }
   }
 
-  const matchRules = (app.assets || []).filter(rule => rule.match)
-  if (!matchRules.length && !(app.repo && needVersion)) return { status: 'ready', downloads, ...versionInfo(app, null) }
-
-  const releases = await fetchReleases(app.repo)
-  const release = pickRelease(releases, app)
-  if (!matchRules.length) return { status: 'ready', downloads, ...versionInfo(app, release?.tag_name) }
-  if (!release) return { status: Object.keys(downloads).length ? 'ready' : 'error', downloads, ...versionInfo(app, null) }
-
-  const rules = matchRules.map(rule => ({ ...rule, regex: new RegExp(rule.match, 'i') }))
-  for (const asset of release.assets || []) {
-    const rule = rules.find(r => r.regex.test(asset.name))
-    if (!rule) continue
-    downloads[rule.platform] ??= {}
-    downloads[rule.platform][rule.arch] ??= {}
-    downloads[rule.platform][rule.arch][rule.osVersion ?? 'default'] = { url: asset.browser_download_url, format: rule.format }
+  for (const [platform, archMap] of Object.entries(entry?.downloads || {})) {
+    for (const [arch, osMap] of Object.entries(archMap)) {
+      for (const [osVersion, download] of Object.entries(osMap)) {
+        downloads[platform] ??= {}
+        downloads[platform][arch] ??= {}
+        downloads[platform][arch][osVersion] = download
+      }
+    }
   }
 
-  return { status: 'ready', downloads, ...versionInfo(app, release.tag_name) }
+  const awaitsRelease = (app.assets || []).some(rule => !rule.url)
+  if (awaitsRelease && !entry?.tag && !Object.keys(downloads).length) return { status: 'error', downloads, ...versionInfo(app, null) }
+
+  return { status: 'ready', downloads, ...versionInfo(app, entry?.tag) }
 }
 
 export const resolveVersionHistory = async app => {
-  const releases = await fetchReleases(app.repo)
-  if (!releases) return []
+  if (!app.repo) return []
+  const entry = (await fetchSnapshot()).apps[app.id]
+  if (!entry?.history) return []
 
-  return releases
-    .filter(r => !app.releasePrefix || r.tag_name.startsWith(app.releasePrefix))
-    .map(r => ({
-      tag: r.tag_name,
-      name: r.name || r.tag_name,
-      publishedAt: r.published_at,
-      url: r.html_url,
-    }))
+  return entry.history.map(r => ({
+    tag: r.tag,
+    name: r.name || r.tag,
+    publishedAt: r.published_at,
+    url: r.url,
+  }))
 }
 
 export const resolveAllDownloads = async list => {
   const entries = await Promise.all(
-    list.map(app => resolveAppDownloads(app, { needVersion: false }).then(result => [app.id, result.downloads]).catch(() => [app.id, {}]))
+    list.map(app => resolveAppDownloads(app).then(result => [app.id, result.downloads]).catch(() => [app.id, {}]))
   )
   return Object.fromEntries(entries)
 }
@@ -316,6 +282,11 @@ const writeRegistryStatusCache = data => {
   } catch {}
 }
 
+const probeRegistry = async () => {
+  const res = await fetch(`${REGISTRY_BASE_URL}/v1/index.json`, { method: 'HEAD' }).catch(() => null)
+  return Boolean(res?.ok)
+}
+
 let registryStatusPromise = null
 
 const fetchRegistryStatus = () => {
@@ -327,9 +298,8 @@ const fetchRegistryStatus = () => {
     if (rateLimited) return cached ?? { online: true, updatedAt: null }
 
     const res = await fetch(`https://api.github.com/repos/${NEWEST_REPO}/commits?sha=api&per_page=1`).catch(() => null)
-    if (!res) return cached ?? { online: false, updatedAt: null }
-    trackRateLimit(res)
-    if (!res.ok) return cached ?? { online: false, updatedAt: null }
+    if (res) trackRateLimit(res)
+    if (!res?.ok) return { online: await probeRegistry(), updatedAt: cached?.updatedAt ?? null }
 
     const commits = await res.json().catch(() => null)
     const data = { online: true, updatedAt: commits?.[0]?.commit?.author?.date ?? null }

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
 
 .amo-overlay {
   position: fixed;
@@ -70,7 +69,7 @@
 
 .amo-eyebrow {
   display: block;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.55rem;
   font-weight: 400;
   letter-spacing: 3px;
@@ -80,7 +79,7 @@
 }
 
 .amo-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text);
@@ -155,7 +154,7 @@
 }
 
 .amo-field-label {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.55rem;
   font-weight: 600;
   letter-spacing: 1px;
@@ -171,7 +170,7 @@
 }
 
 .amo-notice {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 0.65rem;
   font-weight: 300;
   color: var(--text-dim);
