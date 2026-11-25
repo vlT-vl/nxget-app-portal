@@ -1,0 +1,488 @@
+/* docpage.css — pagine "documento" (Perché nxget, Companion)                */
+/*****************************************************************************/
+
+.doc {
+  position: relative;
+  max-width: calc(76rem + 2 * var(--pad));
+  margin: 0 auto;
+  padding: clamp(2.75rem, 6vw, 4.5rem) var(--pad) clamp(3.5rem, 7vw, 5.5rem);
+}
+
+.doc::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -4rem;
+  right: -6%;
+  width: clamp(18rem, 40vw, 32rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 68%);
+  filter: blur(30px);
+  pointer-events: none;
+  animation: secOrb 20s ease-in-out infinite alternate;
+}
+
+.doc-head {
+  margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+.doc-eyebrow {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  animation: heroRise 0.8s var(--ease-out) both;
+}
+
+.doc-title {
+  max-width: 48rem;
+  margin-bottom: 1.1rem;
+  font-family: 'Open Sans', sans-serif;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.doc-lead {
+  max-width: 46rem;
+  margin-bottom: 0.85rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--text-muted);
+  animation: heroRise 0.9s var(--ease-out) 0.25s both;
+}
+
+.doc-lead:nth-of-type(2) {
+  animation-delay: 0.38s;
+}
+
+.doc-group {
+  margin-top: clamp(2.5rem, 5vw, 3.75rem);
+}
+
+.doc-group-head {
+  margin-bottom: 0.5rem;
+}
+
+.doc-group-title {
+  font-family: 'Open Sans', sans-serif;
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.doc-group-sub {
+  margin-top: 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.doc-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(2rem, 5vw, 4.5rem);
+}
+
+.doc-sec {
+  position: relative;
+  padding: 1.9rem 0 2.2rem;
+}
+
+.doc-sec::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+.doc-sec::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3rem;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+  transition: width 0.6s var(--ease-out);
+}
+
+.doc-sec[data-in]::after {
+  animation: barGrow 1s var(--ease-out) var(--rv-d, 0ms) backwards;
+}
+
+.doc-sec:hover::after {
+  width: 100%;
+}
+
+.doc-sec {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 1.35rem;
+  align-items: start;
+}
+
+.doc-sec-main {
+  min-width: 0;
+}
+
+.doc-sec-top {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.45rem;
+}
+
+.doc-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(3.9rem, 6vw, 4.6rem);
+  aspect-ratio: 1;
+  color: var(--accent);
+  transition: color 0.35s;
+}
+
+.doc-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.doc-shape-fill {
+  fill: var(--accent-soft);
+  stroke: none;
+  transition: fill 0.4s;
+}
+
+.doc-shape-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.doc-shape-orbit {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 0.012 0.038;
+  opacity: 0.45;
+  transform-origin: 32px 32px;
+  animation: docOrbit 48s linear infinite;
+}
+
+@keyframes docOrbit {
+  to { transform: rotate(360deg); }
+}
+
+.doc-glyph {
+  position: relative;
+  font-size: clamp(1.35rem, 2.2vw, 1.6rem);
+  transition: color 0.35s;
+}
+
+.doc-sec[data-in] .doc-shape-line {
+  animation: docDraw 1.3s var(--ease-out) calc(var(--rv-d, 0ms) + 150ms) backwards;
+}
+
+.doc-sec[data-in] .doc-shape-fill {
+  animation: docFillIn 0.9s ease calc(var(--rv-d, 0ms) + 700ms) backwards;
+}
+
+.doc-sec[data-in] .doc-glyph {
+  animation: docGlyphIn 0.8s var(--ease-out) calc(var(--rv-d, 0ms) + 650ms) backwards;
+}
+
+@keyframes docDraw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes docFillIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes docGlyphIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+
+.doc-sec:hover .doc-shape-fill {
+  fill: var(--accent);
+}
+
+.doc-sec:hover .doc-glyph {
+  color: #fff;
+}
+
+.doc-sec-title {
+  margin-bottom: 0.6rem;
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.doc-text {
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+.doc-badge {
+  padding: 0.12rem 0.6rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.doc-badge--done {
+  color: hsl(150 55% 38%);
+  border-color: hsl(150 55% 38% / 0.4);
+  background: hsl(150 55% 38% / 0.12);
+}
+
+.doc-badge--planned {
+  color: hsl(38 85% 42%);
+  border-color: hsl(38 85% 42% / 0.4);
+  background: hsl(38 85% 42% / 0.12);
+}
+
+.doc-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: clamp(2.5rem, 5vw, 3.75rem);
+  padding-top: 1.9rem;
+  border-top: 1px solid var(--border);
+}
+
+.doc-foot-label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.doc-foot-text {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.doc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.doc-btn:hover {
+  background: var(--accent-hover);
+  transform: translateX(2px);
+}
+
+.cmp {
+  max-width: 44rem;
+  margin: 0 0 clamp(0.5rem, 2vw, 1rem);
+}
+
+.cmp-window {
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: var(--bg-elevated);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.cmp-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated-2);
+}
+
+.cmp-bar > span {
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+.cmp-bar-title {
+  margin-left: 0.6rem;
+  font-size: 0.72rem;
+  font-style: normal;
+  color: var(--text-dim);
+}
+
+.cmp-bar-tag {
+  margin-left: auto;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cmp-body {
+  padding: 1.1rem;
+}
+
+.cmp-input {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--bg-elevated-2);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.cmp-input-prompt {
+  color: var(--accent);
+}
+
+.cmp-input-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--text);
+  border-right: 2px solid var(--accent);
+}
+
+.cmp[data-in] .cmp-input-text {
+  animation: cmpType 1.6s steps(23, end) 0.5s backwards, cmpCaret 0.9s step-end 0.5s infinite;
+}
+
+@keyframes cmpType {
+  from { max-width: 0; }
+  to   { max-width: 23ch; }
+}
+
+@keyframes cmpCaret {
+  50% { border-right-color: transparent; }
+}
+
+.cmp-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+}
+
+.cmp-row {
+  display: grid;
+  grid-template-columns: minmax(5rem, 8rem) 1fr minmax(6.5rem, auto);
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.78rem;
+}
+
+.cmp[data-in] .cmp-row {
+  animation: rvKid 0.7s var(--ease-out) calc(2.1s + var(--i) * 0.15s) backwards;
+}
+
+.cmp-row-name {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  color: var(--text);
+}
+
+.cmp-row-track {
+  height: 0.38rem;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.cmp-row-fill {
+  display: block;
+  height: 100%;
+  width: var(--pct);
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left;
+}
+
+.cmp[data-in] .cmp-row-fill {
+  animation: cmpFill 1.6s var(--ease-out) calc(2.3s + var(--i) * 0.15s) backwards;
+}
+
+@keyframes cmpFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.cmp-row-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+}
+
+.cmp-note {
+  margin-top: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+  .doc-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .cmp-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .cmp-row-track {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+}

@@ -101,6 +101,7 @@ const AppDownloadCard = ({ app, status, downloads, voucher }) => {
 
   return (
     <>
+      <div className="download-card rv rv-kids">
       <div className="download-header">
         <div className="download-card-icon-wrap">
           {!logoFailed && app.logo ? (
@@ -115,7 +116,7 @@ const AppDownloadCard = ({ app, status, downloads, voucher }) => {
           )}
         </div>
 
-        <h1 className="download-card-name">{app.name}</h1>
+        <h1 className="download-card-name title-shine title-shine--now">{app.name}</h1>
         <p className="download-card-publisher">{t('downloadCard.by')} <strong>{app.publisher}</strong></p>
 
         <div className="download-card-tags">
@@ -240,6 +241,8 @@ const AppDownloadCard = ({ app, status, downloads, voucher }) => {
           </button>
         </div>
       )}
+
+      </div>
 
       {licenseOpen && license.status === 'ready' && <LicenseModal app={app} license={license} onClose={() => setLicenseOpen(false)} />}
     </>

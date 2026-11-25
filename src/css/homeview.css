@@ -1,23 +1,25 @@
 /* homeview.css                                                              */
 /*****************************************************************************/
 
-/* Overlay contenuto nell'altezza dell'Hero (subito sotto la navbar, non
-   sopra di essa): copre solo l'Hero mentre l'icona si compone, poi sfuma e
-   lascia vedere l'Hero già lì sotto — nessun salto di layout. */
+/* Splash d'ingresso: copre l'intera viewport (sopra la navbar), logo e
+   sottotitolo centrati a schermo; poi si dissolve lasciando la Home. */
 .home-hero-wrap {
   position: relative;
 }
 
 .home-splash {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 5;
+  z-index: 300;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
+  padding: 1.5rem;
+  background:
+    radial-gradient(45% 45% at 50% 46%, var(--accent-soft) 0%, transparent 70%),
+    var(--bg);
   opacity: 1;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.75s ease;
 }
 
 .home-splash--out {
@@ -25,8 +27,60 @@
   pointer-events: none;
 }
 
+.home-splash-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  transition: transform 0.75s var(--ease-out), filter 0.75s ease;
+}
+
+.home-splash--out .home-splash-stage {
+  transform: scale(1.12);
+  filter: blur(8px);
+}
+
+.home-splash-icon {
+  --nx-icon-h: clamp(5rem, 17vw, 9rem);
+  --nx-word-h: clamp(1.7rem, 5.2vw, 3rem);
+  gap: clamp(0.4rem, 1.5vw, 1rem);
+}
+
+.home-splash-icon {
+  --nx-pad: calc(var(--nx-icon-h) * 0.3);
+}
+
+.home-splash-icon .nxget-logo-icon {
+  padding: var(--nx-pad);
+}
+
+.home-splash-tagline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35em 0.6em;
+  font-family: 'Open Sans', sans-serif;
+  font-size: clamp(0.9rem, 2.2vw, 1.25rem);
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.home-splash-word {
+  display: inline-block;
+  opacity: 0;
+  animation: splashWordIn 0.9s var(--ease-out) calc(1.75s + var(--w, 0) * 0.28s) forwards;
+}
+
+@keyframes splashWordIn {
+  from { opacity: 0; transform: translateY(0.9em); filter: blur(8px); letter-spacing: 0.6em; }
+  to   { opacity: 1; transform: none; filter: blur(0); letter-spacing: inherit; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .home-splash { transition: none; }
+  .home-splash, .home-splash-stage { transition: none; }
+  .home-splash-word { opacity: 1; animation: none; }
 }
 
 .home-about {
@@ -53,7 +107,6 @@
 .home-about-text {
   max-width: 36rem;
   text-align: center;
-  animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
 .home-about-lead {

@@ -1,75 +1,43 @@
-import { HiOutlineGlobeAlt, HiOutlineShieldCheck, HiOutlineCodeBracket, HiOutlineArrowPath, HiOutlineCommandLine, HiOutlineHandThumbUp, HiOutlineInformationCircle, HiOutlineDocumentText, HiOutlineLanguage, HiOutlineMagnifyingGlass, HiOutlineSquares2X2, HiOutlineArrowTopRightOnSquare } from 'react-icons/hi2'
+import {
+  HiOutlineGlobeAlt, HiOutlineHandThumbUp, HiOutlineShieldCheck, HiOutlineCodeBracket, HiOutlineArrowPath,
+  HiOutlineComputerDesktop, HiOutlineCodeBracketSquare, HiOutlineFire, HiOutlineRocketLaunch, HiOutlineCube,
+  HiOutlineCircleStack, HiOutlineTag, HiOutlineMagnifyingGlass, HiOutlineArrowTopRightOnSquare,
+  HiOutlineInformationCircle, HiOutlineDocumentText, HiOutlineSquares2X2, HiOutlineLanguage, HiOutlineArrowRight,
+} from 'react-icons/hi2'
+import DocPage from './DocPage.jsx'
 import { useLang } from '../lib/uiText.js'
-import '../css/featuresview.css'
 
-const ICONS = [HiOutlineGlobeAlt, HiOutlineHandThumbUp, HiOutlineShieldCheck, HiOutlineCodeBracket, HiOutlineArrowPath, HiOutlineCommandLine]
-const KNOW_ICONS = [HiOutlineInformationCircle, HiOutlineDocumentText, HiOutlineMagnifyingGlass, HiOutlineSquares2X2, HiOutlineArrowTopRightOnSquare, HiOutlineLanguage]
+const ICONS = {
+  items: [HiOutlineGlobeAlt, HiOutlineHandThumbUp, HiOutlineShieldCheck, HiOutlineCodeBracket, HiOutlineArrowPath, HiOutlineComputerDesktop],
+  open: [HiOutlineCodeBracketSquare, HiOutlineFire, HiOutlineRocketLaunch, HiOutlineCube],
+  steps: [HiOutlineCircleStack, HiOutlineTag, HiOutlineMagnifyingGlass, HiOutlineArrowTopRightOnSquare],
+  know: [HiOutlineInformationCircle, HiOutlineDocumentText, HiOutlineMagnifyingGlass, HiOutlineSquares2X2, HiOutlineArrowTopRightOnSquare, HiOutlineLanguage],
+}
 
-const FeaturesView = () => {
+const FeaturesView = ({ onNav }) => {
   const { t } = useLang()
-  const items = t('features.items')
-  const steps = t('features.steps')
-  const know = t('features.know')
+
+  const groups = [
+    { title: t('nav.features'), subtitle: t('features.subtitle'), items: t('features.items'), icons: ICONS.items },
+    { title: t('features.openTitle'), subtitle: t('features.openSubtitle'), items: t('features.open'), icons: ICONS.open },
+    { title: t('features.howTitle'), subtitle: t('features.howSubtitle'), items: t('features.steps'), icons: ICONS.steps },
+    { title: t('features.knowTitle'), subtitle: t('features.knowSubtitle'), items: t('features.know'), icons: ICONS.know },
+  ]
 
   return (
-    <section className="features-view">
-      <div className="features-inner">
-        <header className="features-page-header">
-          <h1 className="section-title">{t('nav.features')}</h1>
-          <p className="section-subtitle">{t('features.subtitle')}</p>
-        </header>
-
-        <div className="features-grid">
-          {items.map((f, i) => {
-            const Icon = ICONS[i]
-            return (
-              <div key={f.title} className="feature-card" style={{ '--i': i }}>
-                <Icon className="feature-icon" />
-                <h3 className="feature-title">{f.title}</h3>
-                <p className="feature-text">{f.text}</p>
-              </div>
-            )
-          })}
-        </div>
-
-        <section className="features-section">
-          <header className="features-section-header">
-            <h2 className="section-title">{t('features.howTitle')}</h2>
-            <p className="section-subtitle">{t('features.howSubtitle')}</p>
-          </header>
-
-          <ol className="how-steps">
-            {steps.map((s, i) => (
-              <li key={s.title} className="how-step" style={{ '--i': i }}>
-                <span className="how-step-num">{i + 1}</span>
-                <h3 className="feature-title">{s.title}</h3>
-                <p className="feature-text">{s.text}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="features-section">
-          <header className="features-section-header">
-            <h2 className="section-title">{t('features.knowTitle')}</h2>
-            <p className="section-subtitle">{t('features.knowSubtitle')}</p>
-          </header>
-
-          <div className="know-grid">
-            {know.map((k, i) => {
-              const Icon = KNOW_ICONS[i]
-              return (
-                <div key={k.title} className="feature-card" style={{ '--i': i }}>
-                  <Icon className="feature-icon" />
-                  <h3 className="feature-title">{k.title}</h3>
-                  <p className="feature-text">{k.text}</p>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-      </div>
-    </section>
+    <DocPage
+      eyebrow={t('features.eyebrow')}
+      title={t('nav.features')}
+      lead={[t('features.subtitle')]}
+      groups={groups}
+      footer={{
+        label: t('features.ctaLabel'),
+        text: t('features.ctaText'),
+        cta: t('features.ctaButton'),
+        icon: <HiOutlineArrowRight />,
+        onClick: () => onNav('apps'),
+      }}
+    />
   )
 }
 

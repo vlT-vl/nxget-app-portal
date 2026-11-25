@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { dump as dumpYaml } from 'js-yaml'
-import { HiArrowLeft, HiOutlineChevronDown, HiOutlineCommandLine, HiOutlineClipboard, HiOutlineCheck, HiOutlineGlobeAlt } from 'react-icons/hi2'
+import { HiArrowLeft, HiOutlineChevronDown, HiOutlineCommandLine, HiOutlineClipboard, HiOutlineCheck, HiOutlineGlobeAlt, HiOutlineArrowTopRightOnSquare } from 'react-icons/hi2'
 import { SiGithub } from 'react-icons/si'
 import AppCard from './AppCard.jsx'
 import AppDownloadCard from './AppDownloadCard.jsx'
@@ -96,12 +96,12 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
         <AppDownloadCard app={app} status={status} downloads={downloads} voucher={voucher} />
 
         <div className={`detail-columns${history.length > 0 ? ' detail-columns--split' : ''}`}>
-          <div className="detail-info">
+          <div className="detail-info rv fx-glow">
             <h2 className="detail-info-title">{t('appDetail.infoTitle')}</h2>
 
             {app.about?.[lang] && <p className="detail-info-about">{app.about[lang]}</p>}
 
-            <div className="detail-info-grid">
+            <div className="detail-info-grid rv rv-kids">
               <div className="detail-info-field">
                 <span className="detail-info-label">{t('appDetail.publisher')}</span>
                 <span className="detail-info-value">{app.publisher}</span>
@@ -132,12 +132,12 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
                   </span>
                 </div>
               </div>
-              <div className="detail-info-field">
+              <div className="detail-info-field detail-info-field--platforms">
                 <span className="detail-info-label">{t('appDetail.platforms')}</span>
                 {status === 'loading' ? (
                   <span className="detail-info-value">{t('appDetail.loading')}</span>
                 ) : getPlatforms(downloads).length > 0 ? (
-                  <div className="detail-info-tags">
+                  <div className="detail-info-tags detail-info-tags--nowrap">
                     {getPlatforms(downloads).map(p => {
                       const Icon = PLATFORM_META[p].icon
                       return (
@@ -160,23 +160,29 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
           </div>
 
           {history.length > 0 && (
-            <div className="detail-info detail-versions-card">
+            <div className="detail-info detail-versions-card rv fx-glow">
               <h2 className="detail-info-title">{t('appDetail.versionHistory')}</h2>
               <div className="detail-versions-scroll">
-                <ol className="version-timeline">
-                  {history.map(v => (
-                    <li key={v.tag} className="version-item">
+                <ol className={`version-timeline rv${history.length === 1 ? ' version-timeline--single' : ''}`}>
+                  {history.map((v, i) => (
+                    <li key={v.tag} className={`version-item${i === 0 ? ' version-item--latest' : ''}`} style={{ '--n': Math.min(i, 9) }}>
                       <span className="version-dot" aria-hidden="true" />
-                      {locked ? (
-                        <span className="version-pill version-pill--static">
-                          <span className="version-pill-tag">{v.name}</span>
-                        </span>
-                      ) : (
-                        <a className="version-pill" href={v.url} target="_blank" rel="noopener noreferrer">
-                          <span className="version-pill-tag">{v.name}</span>
-                        </a>
-                      )}
-                      <time className="version-date" dateTime={v.publishedAt}>{formatDate(v.publishedAt)}</time>
+                      <div className="version-main">
+                        {locked ? (
+                          <span className="version-pill version-pill--static">
+                            <span className="version-pill-tag">{v.name}</span>
+                          </span>
+                        ) : (
+                          <a className="version-pill" href={v.url} target="_blank" rel="noopener noreferrer">
+                            <span className="version-pill-tag">{v.name}</span>
+                          </a>
+                        )}
+                        {i === 0 && history.length > 1 && <span className="version-latest">{t('appDetail.latest')}</span>}
+                      </div>
+                      <div className="version-meta">
+                        <time className="version-date" dateTime={v.publishedAt}>{formatDate(v.publishedAt)}</time>
+                        {!locked && <HiOutlineArrowTopRightOnSquare className="version-arrow" aria-hidden="true" />}
+                      </div>
                     </li>
                   ))}
                 </ol>
@@ -186,7 +192,7 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
         </div>
 
         {related.length > 0 && (
-          <div className="detail-related">
+          <div className="detail-related rv fx-glow">
             <div className="detail-related-heading">
               <h2 className="section-title">{t('appDetail.moreIn')}</h2>
               <span
@@ -202,7 +208,7 @@ const AppDetailView = ({ app, onBack, onSelect }) => {
           </div>
         )}
 
-        <details className="detail-cli">
+        <details className="detail-cli rv fx-glow">
           <summary className="detail-cli-summary">
             <HiOutlineCommandLine className="detail-cli-icon" />
             <span className="detail-cli-summary-text">{t('appDetail.cliSummary')}</span>

@@ -1,13 +1,35 @@
+.download-card > * {
+  position: relative;
+}
+
 .download-header {
   text-align: center;
   margin-bottom: 1.75rem;
-  animation: fadeInUp 0.5s ease both;
 }
+
+.download-card[data-in] .download-header > * {
+  animation: rvKid 0.8s var(--ease-out) backwards;
+}
+
+.download-card[data-in] .download-header > :nth-child(1) { animation-delay: 0.2s; }
+.download-card[data-in] .download-header > :nth-child(2) { animation-delay: 0.32s; }
+.download-card[data-in] .download-header > :nth-child(3) { animation-delay: 0.44s; }
+.download-card[data-in] .download-header > :nth-child(4) { animation-delay: 0.56s; }
+
+.download-card[data-in] .download-card-actions .download-btn {
+  animation: rvKid 0.7s var(--ease-out) backwards;
+}
+
+.download-card[data-in] .download-card-actions .download-btn:nth-child(1) { animation-delay: 0.65s; }
+.download-card[data-in] .download-card-actions .download-btn:nth-child(2) { animation-delay: 0.73s; }
+.download-card[data-in] .download-card-actions .download-btn:nth-child(3) { animation-delay: 0.81s; }
+.download-card[data-in] .download-card-actions .download-btn:nth-child(4) { animation-delay: 0.89s; }
+.download-card[data-in] .download-card-actions .download-btn:nth-child(n+5) { animation-delay: 0.97s; }
 
 .download-card-icon-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
 }
 
 .download-card-logo {
@@ -139,7 +161,6 @@
   justify-content: center;
   gap: 0.75rem;
   margin-bottom: 1.75rem;
-  animation: fadeInUp 0.5s ease 0.1s both;
 }
 
 .download-btn {

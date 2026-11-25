@@ -16,7 +16,7 @@ const Navbar = ({ view, onNav, hidden = false, onOpenAbout }) => {
   return (
     <nav className={`navbar${hidden ? ' navbar--hidden' : ''}`}>
       <button className="navbar-logo" onClick={() => onNav('home')} aria-label={t('nav.home')}>
-        <NxgetLogo />
+        <NxgetLogo className="nav-logo" animated={!hidden} />
       </button>
 
       <ul className="nav-links">

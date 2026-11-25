@@ -62,11 +62,20 @@ const animatedIconMarkup = tagFacets(baseIconMarkup)
 const plainWordmarkMarkup = `<svg viewBox="${WORDMARK_VIEWBOX}"><path fill="currentColor" d="${wordmarkD}"/></svg>`
 const animatedWordmarkMarkup = `<svg viewBox="${WORDMARK_VIEWBOX}"><g class="nxget-type-wrap"><path fill="currentColor" d="${wordmarkD}"/></g></svg>`
 
+const traceMarkup = (
+  <svg className="nxget-trace" viewBox="0 0 700 700" aria-hidden="true">
+    <path className="nxget-trace-path" d="M200.3 -11.5 L501.6 -11.5 L634.3 218.4 L767.1 448.3 L616.4 709.2 L85.5 709.2 L-65.2 448.3 L67.6 218.4 Z" pathLength="1" />
+  </svg>
+)
+
 const NxgetLogo = ({ className = '', animated = false, iconOnly = false, stacked = false }) => {
   if (stacked) {
     return (
       <div className={`nxget-logo nxget-logo--stacked${className ? ` ${className}` : ''}${animated ? ' nxget-logo--animated' : ''}`}>
-        <div className="nxget-logo-icon" dangerouslySetInnerHTML={{ __html: animated ? animatedIconMarkup : baseIconMarkup }} />
+        <div className="nxget-logo-icon">
+          <div className="nxget-logo-icon-art" dangerouslySetInnerHTML={{ __html: animated ? animatedIconMarkup : baseIconMarkup }} />
+          {animated && traceMarkup}
+        </div>
         <div className="nxget-logo-word" dangerouslySetInnerHTML={{ __html: animated ? animatedWordmarkMarkup : plainWordmarkMarkup }} />
       </div>
     )

@@ -11,6 +11,7 @@ import NxgetLogo from './NxgetLogo.jsx'
 import AboutModal from './AboutModal.jsx'
 import { SiGithub, SiReact, SiVite } from 'react-icons/si'
 import { useLang } from '../lib/uiText.js'
+import { useScrollReveal } from '../lib/motion.js'
 import pkg from '../../package.json'
 
 const GITHUB_URL = import.meta.env.VITE_GITHUB_URL
@@ -18,6 +19,7 @@ const INITIAL_APPS_STATE = { query: '', platform: 'all', category: 'all', page: 
 
 const App = () => {
   const { t } = useLang()
+  useScrollReveal()
   const [view, setView] = useState('home')
   const [appsState, setAppsState] = useState(INITIAL_APPS_STATE)
   const savedScroll = useRef(0)
@@ -76,7 +78,7 @@ const App = () => {
             onTitlePlayed={() => setAppsTitlePlayed(true)}
           />
         )}
-        {view === 'features'   && <FeaturesView />}
+        {view === 'features'   && <FeaturesView onNav={nav} />}
         {view === 'cli'        && <CliView />}
         {view === 'about'      && <AboutView onOpenAbout={() => setAboutOpen(true)} />}
         {view === 'app-detail' && selectedApp && (

@@ -2,21 +2,68 @@
 /*****************************************************************************/
 
 .about-view {
+  position: relative;
+  overflow: hidden;
   padding: clamp(3rem, 7vw, 5rem) var(--pad);
   text-align: center;
+}
+
+.about-view::before,
+.about-view::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: clamp(18rem, 40vw, 34rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 68%);
+  filter: blur(30px);
+  pointer-events: none;
+  animation: secOrb 18s ease-in-out infinite alternate;
+}
+
+.about-view::before {
+  top: -10%;
+  left: -8%;
+}
+
+.about-view::after {
+  right: -10%;
+  bottom: 0;
+  animation-duration: 23s;
+  animation-direction: alternate-reverse;
 }
 
 .about-inner {
   max-width: 56rem;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .about-logo-wrap {
-  margin-bottom: 1.5rem;
-  animation: aboutLogoIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  position: relative;
+  margin-bottom: 1.75rem;
+  animation: aboutLogoIn 0.5s var(--ease-out) both;
+}
+
+.about-logo-wrap::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: 16rem;
+  height: 8rem;
+  margin: -4rem 0 0 -8rem;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent);
+  filter: blur(18px);
+  opacity: 0;
+  animation: nxgetGlowIn 0.8s ease 0.35s forwards, nxgetGlowBreathe 4.2s ease-in-out 1.2s infinite;
 }
 
 .nxget-logo.about-logo svg {
@@ -34,8 +81,7 @@
   font-size: clamp(1.6rem, 3.6vw, 2.2rem);
   font-weight: 600;
   color: var(--text);
-  margin: 0 0 1.75rem;
-  animation: fadeInUp 0.55s ease 0.08s both;
+  margin: 0 0 2.25rem;
 }
 
 .about-paragraph {
@@ -44,8 +90,26 @@
   line-height: 1.8;
   color: var(--text-muted);
   text-align: left;
-  margin-bottom: 1.4rem;
-  animation: fadeInUp 0.5s ease calc(0.14s + var(--i, 0) * 70ms) both;
+  position: relative;
+  align-self: stretch;
+  margin-bottom: 1.6rem;
+  padding-left: 1.5rem;
+}
+
+.about-paragraph::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(var(--accent), transparent);
+  transform-origin: top;
+}
+
+.about-paragraph[data-in]::before {
+  animation: lineDraw 1.1s var(--ease-out) calc(var(--rv-d, 0ms) + 200ms) backwards;
 }
 
 .about-refs {
@@ -54,7 +118,6 @@
   justify-content: center;
   gap: 0.75rem;
   margin-top: 1rem;
-  animation: fadeInUp 0.55s ease 0.5s both;
 }
 
 .about-ref-link {
@@ -68,10 +131,19 @@
   font-size: 0.8rem;
   font-weight: 500;
   text-decoration: none;
-  transition: border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.about-ref-link svg {
+  transition: transform 0.3s var(--ease-out);
+}
+
+.about-ref-link:hover svg {
+  transform: translate(2px, -2px);
 }
 
 .about-ref-link:hover {
+  background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -93,7 +165,6 @@
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
-  animation: fadeInUp 0.55s ease 0.58s both;
 }
 
 .about-info-pill:hover {
@@ -116,12 +187,24 @@
   align-items: center;
   gap: 1rem;
   margin-top: 0.75rem;
-  animation: fadeInUp 0.55s ease both;
+  padding-top: 2.25rem;
+  position: relative;
 }
 
-.about-brand:not(.about-brand--in),
-.about-brand:not(.about-brand--in) * {
-  animation-play-state: paused;
+.about-brand::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4rem;
+  height: 2px;
+  margin-left: -2rem;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.about-brand[data-in]::before {
+  animation: barGrow 1s var(--ease-out) 0.3s backwards;
 }
 
 .about-brand + .about-refs {

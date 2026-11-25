@@ -8,6 +8,23 @@ import '../css/hero.css'
 
 const COUNT_ANIM_MS = 900
 
+const splitTitle = (before, accent, after) => {
+  const tokens = [
+    ...before.split(/\s+/).filter(Boolean).map(w => ({ w, accent: false })),
+    ...accent.split(/\s+/).filter(Boolean).map(w => ({ w, accent: true })),
+  ]
+  if (after) {
+    if (/^\s/.test(after)) {
+      after.split(/\s+/).filter(Boolean).forEach(w => tokens.push({ w, accent: false }))
+    } else {
+      const [head, ...rest] = after.split(/\s+/).filter(Boolean)
+      if (head && tokens.length) tokens[tokens.length - 1].w += head
+      rest.forEach(w => tokens.push({ w, accent: false }))
+    }
+  }
+  return tokens
+}
+
 const Hero = ({ onSearch, appCount, visible = true, discoverAlreadyPlayed = false, onDiscoverPlayed }) => {
   const { t, lang } = useLang()
   const [displayCount, setDisplayCount] = useState(0)
@@ -53,15 +70,21 @@ const Hero = ({ onSearch, appCount, visible = true, discoverAlreadyPlayed = fals
   }
 
   return (
-    <section className="hero">
+    <section className={`hero${visible ? ' hero--play' : ''}`}>
       <div className="hero-inner">
         <div className="hero-content">
           <span className="hero-eyebrow">{t('hero.eyebrow')}</span>
           <h1 className="hero-title">
-            {t('hero.titleBefore')} <span className="hero-title-accent">{t('hero.titleAccent')}</span>{t('hero.titleAfter')}
+            {splitTitle(t('hero.titleBefore'), t('hero.titleAccent'), t('hero.titleAfter')).map((tok, i) => (
+              <span key={i}>
+                <span className={`hero-word${tok.accent ? ' hero-title-accent' : ''}`} style={{ '--w': i }}>{tok.w}</span>{' '}
+              </span>
+            ))}
           </h1>
           <p className="hero-subtitle">
-            {t('hero.subtitle')}
+            {t('hero.subtitle').split(' ').map((w, i) => (
+              <span key={i}><span className="hero-subtitle-word" style={{ '--w': i }}>{w}</span>{' '}</span>
+            ))}
           </p>
 
           <div className="hero-discover-group">
@@ -93,7 +116,9 @@ const Hero = ({ onSearch, appCount, visible = true, discoverAlreadyPlayed = fals
           </div>
         </div>
 
-        <CatalogTower className="hero-illustration" restartInterval={CATALOG_RESTART_MS} />
+        {visible
+          ? <CatalogTower className="hero-illustration" restartInterval={CATALOG_RESTART_MS} />
+          : <div className="hero-illustration" aria-hidden="true" />}
       </div>
     </section>
   )

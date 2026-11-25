@@ -34,7 +34,7 @@ const AppCard = ({ app, index = 0, onSelect, compact = false, featured = false }
   return (
     <button
       type="button"
-      className={`app-card${compact ? ' app-card--compact' : ''}${featured ? ' app-card--featured' : ''}${featured && isVlt ? ' app-card--featured-vlt' : ''}`}
+      className={`app-card rv rv-kids fx-card fx-tilt fx-sheen${compact ? ' app-card--compact' : ''}${featured ? ' app-card--featured' : ''}${featured && isVlt ? ' app-card--featured-vlt' : ''}`}
       onClick={() => onSelect(app)}
       style={{ '--i': index, '--tag-hue': categoryHues.get(app.category) }}
     >

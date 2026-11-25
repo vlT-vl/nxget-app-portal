@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { HiOutlineSearch } from 'react-icons/hi'
-import { HiOutlineChevronDown } from 'react-icons/hi2'
+import { HiOutlineChevronDown, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineRectangleStack } from 'react-icons/hi2'
 import { VscError } from 'react-icons/vsc'
 import AppCard from './AppCard.jsx'
 import CatalogTower, { CATALOG_RESTART_MS } from './CatalogTower.jsx'
@@ -15,6 +15,7 @@ import '../css/appsview.css'
 const PLATFORMS = Object.keys(PLATFORM_META)
 const PAGE_SIZE = 16
 const MENU_CLOSE_MS = 180
+const PAGE_TAG_MS = 2200
 
 const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, onTitlePlayed }) => {
   const { t, lang } = useLang()
@@ -31,6 +32,7 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
   const categoryRef = useRef(null)
   const headerRef = useRef(null)
   const searchInputRef = useRef(null)
+  const [pageTag, setPageTag] = useState(null)
   const [animateTitle] = useState(() => !titleAlreadyPlayed)
   const [headerOut, setHeaderOut] = useState(false)
   const [focusSearchOnMount] = useState(() => state.focusSearch)
@@ -157,7 +159,16 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
     if (categoryOpen) closeCategoryMenu()
     onStateChange({ ...state, query: '', platform: 'all', category: 'all', page: 1 })
   }
+  const pageDir = useRef('next')
+
+  useEffect(() => {
+    if (!pageTag) return undefined
+    const id = setTimeout(() => setPageTag(null), PAGE_TAG_MS)
+    return () => clearTimeout(id)
+  }, [pageTag])
   const goToPage = n => {
+    pageDir.current = n < currentPage ? 'prev' : 'next'
+    setPageTag({ page: n, key: Date.now() })
     onStateChange({ ...state, page: n })
     scrollToTop()
   }
@@ -174,7 +185,7 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
         >
           <h1 className="section-title apps-title">
             <NxgetLogo className="apps-title-logo" iconOnly animated={animateTitle} />
-            <span className="apps-title-text">{t('apps.title')}</span>
+            <span className="apps-title-text title-shine">{t('apps.title')}</span>
           </h1>
         </header>
 
@@ -324,8 +335,37 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
             <p className="apps-empty">{t('catalog.loading')}</p>
           ) : filtered.length > 0 ? (
             <>
-              <div className="apps-grid" key={visible.map(app => app.id).join('|')}>
-                {visible.map((app, i) => <AppCard key={app.id} app={app} index={i} onSelect={onSelect} />)}
+              <div className="apps-stage">
+                {totalPages > 1 && (
+                  <>
+                    <div className="apps-nav-rail apps-nav-rail--prev">
+                      <button
+                        type="button"
+                        className="apps-nav apps-nav--prev"
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage <= 1}
+                        aria-label={t('apps.prevPage')}
+                      >
+                        <HiOutlineChevronLeft />
+                      </button>
+                    </div>
+                    <div className="apps-nav-rail apps-nav-rail--next">
+                      <button
+                        type="button"
+                        className="apps-nav apps-nav--next"
+                        onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage >= totalPages}
+                        aria-label={t('apps.nextPage')}
+                      >
+                        <HiOutlineChevronRight />
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                <div className={`apps-grid apps-grid--${pageDir.current}`} key={visible.map(app => app.id).join('|')}>
+                  {visible.map((app, i) => <AppCard key={app.id} app={app} index={i} onSelect={onSelect} />)}
+                </div>
               </div>
 
               {totalPages > 1 && (
@@ -357,6 +397,20 @@ const AppsView = ({ state, onStateChange, onSelect, titleAlreadyPlayed = false, 
           )
         )}
       </div>
+
+      {pageTag && (
+        <div className="apps-page-tag" key={pageTag.key} role="status" aria-live="polite">
+          <HiOutlineRectangleStack className="apps-page-tag-icon" aria-hidden="true" />
+          <span className="apps-page-tag-text">
+            <strong>{t('apps.pageOf', { page: pageTag.page, total: totalPages })}</strong>
+            <span>{t('apps.range', {
+              from: (pageTag.page - 1) * PAGE_SIZE + 1,
+              to: Math.min(pageTag.page * PAGE_SIZE, filtered.length),
+              total: filtered.length,
+            })}</span>
+          </span>
+        </div>
+      )}
     </section>
   )
 }

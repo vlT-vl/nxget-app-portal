@@ -14,8 +14,6 @@
   padding: 1.85rem;
   min-height: 18.75rem;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) calc(min(var(--i, 0), 12) * 60ms) both;
 }
 
 html[data-theme='light'] .app-card {
@@ -24,8 +22,7 @@ html[data-theme='light'] .app-card {
 
 .app-card:hover {
   border-color: var(--accent);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 18px 38px -12px rgba(0, 0, 0, 0.5);
 }
 
 .app-card-header {
@@ -34,7 +31,6 @@ html[data-theme='light'] .app-card {
   justify-content: space-between;
   gap: 0.75rem;
   width: 100%;
-  animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) calc((min(var(--i, 0), 12) * 60ms) + 0.08s) both;
 }
 
 .app-logo-wrap {
@@ -165,7 +161,6 @@ html[data-theme='light'] .app-card {
   font-weight: 700;
   line-height: 1.3;
   color: var(--text);
-  animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) calc((min(var(--i, 0), 12) * 60ms) + 0.18s) both;
 }
 
 .app-desc {
@@ -178,14 +173,13 @@ html[data-theme='light'] .app-card {
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) calc((min(var(--i, 0), 12) * 60ms) + 0.23s) both;
 }
 
 .app-platforms {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 0.75rem 1.25rem;
+  gap: 0.75rem 1rem;
   width: 100%;
   min-height: 1.45rem;
   padding-top: 1rem;
@@ -193,13 +187,15 @@ html[data-theme='light'] .app-card {
   border-top: 1px solid var(--border);
   font-size: 0.85rem;
   color: var(--text-dim);
-  animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) calc((min(var(--i, 0), 12) * 60ms) + 0.28s) both;
 }
+
 
 .app-platform-chip {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 0.3rem;
+  white-space: nowrap;
 }
 
 .app-platform-chip-icon {
@@ -261,5 +257,16 @@ html[data-theme='light'] .app-card {
   .app-card--featured {
     width: 100%;
     min-width: 0;
+  }
+}
+
+@media (min-width: 561px) and (max-width: 900px) {
+  .app-card:not(.app-card--featured) {
+    padding: 1.4rem;
+  }
+
+  .app-platforms {
+    gap: 0.5rem 0.7rem;
+    font-size: 0.8rem;
   }
 }

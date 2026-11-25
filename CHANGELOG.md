@@ -2,6 +2,42 @@
 
 Le funzionalità principali del portale, in ordine cronologico inverso.
 
+## 2026-11-25 — 0.1.3 / R251126
+
+- Splash d'ingresso a tutto schermo: logo animato centrato nella viewport con
+  un cerchio che pulsa attorno all'icona appena disegnata, scritta e
+  sottotitolo animato parola per parola; poi si dissolve lasciando spazio alla
+  Home, con navbar e footer che entrano scorrendo.
+- Hero in motion design: titolo che appare parola per parola, elementi che
+  salgono in sequenza, alone di sfondo che si muove lentamente, illustrazione
+  del catalogo che parte solo a splash concluso.
+- Motion design su tutte le card e le sezioni: ingresso allo scroll con
+  sequenza a cascata, contenuto delle card che segue il proprio ritmo, effetto
+  luce che segue il puntatore e sollevamento in hover.
+- Home e Applicazioni con motion design più spinto: titoli con riflesso di luce,
+  sezioni con luce che scorre e aloni in movimento, bottone con riflesso;
+  card app con ingresso in prospettiva e inclinazione 3D che segue il puntatore;
+  barra filtri che entra con effetto elastico; riflesso in hover sulle card app.
+- «Perché nxget» rifatta come documento numerato a due colonne, nello stile
+  delle note legali di pmxtools, con sezioni che si disegnano allo scroll e un
+  invito finale a esplorare le app.
+- Nuova sezione in «Perché nxget»: catalogo in prevalenza open source e progetti
+  emergenti, con spazio a sviluppatori esordienti e al software vlT.
+- La pagina CLI diventa «Companion»: racconta l'app desktop che avvierà i
+  download con i comandi mostrati nelle pagine delle app, con anteprima
+  illustrativa della finestra e lo stesso layout a documento.
+- Pagina About in motion design: logo nxget animato più rapido con alone, titolo
+  con riflesso, paragrafi con filetto che si disegna allo scroll, blocco vlT e
+  link che entrano in sequenza, aloni di sfondo in movimento lento.
+- Applicazioni: frecce di navigazione ai lati delle card per andare avanti e
+  indietro tra le pagine, animate in ingresso e in hover, con scorrimento della
+  griglia nella direzione scelta.
+- Cronologia versioni delle app con repo GitHub animata: linea che si disegna con
+  un fascio di luce, voci e pallini in sequenza, impulso sulla versione più recente.
+- Pagina di dettaglio app: blocco download come card con alone e ingresso a
+  cascata, riquadri informazioni/versioni/correlate con luce che segue il
+  puntatore, barra titolo e linea della timeline che si disegnano.
+
 ## 2026-10-13 — 0.1.2 / R131026
 
 - Il catalogo non legge più le release direttamente da GitHub: legge il file

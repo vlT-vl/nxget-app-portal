@@ -49,15 +49,99 @@
   gap: 0.65rem;
 }
 
-.nxget-logo-icon svg {
+.nxget-logo--stacked {
+  --nx-icon-h: clamp(3.5rem, 10vw, 6rem);
+  --nx-word-h: clamp(1.3rem, 3.6vw, 2.1rem);
+}
+
+.nxget-logo-icon {
+  position: relative;
+}
+
+.nxget-logo-icon-art svg {
   display: block;
-  height: clamp(3.5rem, 10vw, 6rem);
+  height: var(--nx-icon-h);
   width: auto;
 }
 
 .nxget-logo-word svg {
   display: block;
-  height: clamp(1.3rem, 3.6vw, 2.1rem);
+  height: var(--nx-word-h);
   width: auto;
   color: var(--soft-fill);
+}
+
+.nxget-logo--stacked.nxget-logo--animated .nxget-logo-icon::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--nx-icon-h) * 1.9);
+  height: calc(var(--nx-icon-h) * 1.9);
+  margin: calc(var(--nx-icon-h) * -0.95) 0 0 calc(var(--nx-icon-h) * -0.95);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent 78%);
+  opacity: 0;
+  pointer-events: none;
+  animation: nxgetGlowIn 1.2s ease 1.6s forwards, nxgetGlowBreathe 4.2s ease-in-out 2.8s infinite;
+}
+
+.nxget-logo .nxget-trace {
+  position: absolute;
+  inset: var(--nx-pad, 0);
+  width: calc(100% - 2 * var(--nx-pad, 0px));
+  height: calc(100% - 2 * var(--nx-pad, 0px));
+  overflow: visible;
+  pointer-events: none;
+}
+
+.nxget-trace-path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 7;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.85;
+  animation: nxgetTraceDraw 1.6s var(--ease-out) 0.9s forwards;
+}
+
+@keyframes nxgetTraceDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes nxgetGlowIn {
+  to { opacity: 1; }
+}
+
+@keyframes nxgetGlowBreathe {
+  0%, 100% { transform: scale(0.92); opacity: 0.75; }
+  50%      { transform: scale(1.08); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nxget-logo--stacked.nxget-logo--animated .nxget-logo-icon::after { animation: none; opacity: 1; }
+  .nxget-trace-path { animation: none; stroke-dashoffset: 0; }
+}
+
+
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave {
+  animation-duration: 0.26s;
+}
+
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-0 { animation-delay: 0s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-1 { animation-delay: 0.02s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-2 { animation-delay: 0.04s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-3 { animation-delay: 0.06s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-4 { animation-delay: 0.08s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-5 { animation-delay: 0.1s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-6 { animation-delay: 0.12s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-7 { animation-delay: 0.14s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-8 { animation-delay: 0.16s; }
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-wave-9 { animation-delay: 0.18s; }
+
+:is(.about-logo, .nav-logo).nxget-logo--animated .nxget-type-wrap {
+  animation-duration: 0.4s;
+  animation-delay: 0.3s;
 }

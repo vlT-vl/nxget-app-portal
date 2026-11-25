@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.1.2--R131026-b23b3f?style=flat-square" alt="version"/>
+  <img src="https://img.shields.io/badge/version-0.1.3--R251126-b23b3f?style=flat-square" alt="version"/>
   <img src="https://img.shields.io/badge/react-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="react"/>
   <img src="https://img.shields.io/badge/vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="vite"/>
   <img src="https://img.shields.io/badge/deploy-GitHub%20Pages-black?style=flat-square&logo=github" alt="deploy"/>
@@ -23,7 +23,7 @@
 
 There is no application backend. The catalog itself lives in a separate public registry, [`nxget.packages`](https://github.com/vlT-vl/nxget.packages) — one hand-written YAML manifest per app. The portal fetches this registry live in the browser. Where a manifest names a GitHub `repo`, the registry publishes the latest stable release (its tag, download links and recent history) in `v1/releases.json`, which the portal reads in a single request; where it does not (closed-source apps), the manifest itself carries the fixed download links and the current `version`. Nothing about the catalog or its downloads is bundled or hardcoded into the portal, so both stay current without a new deploy.
 
-A dedicated cross-platform CLI, able to install the same catalog's apps and content straight from the terminal, is planned as the next step — see the in-app **CLI** page for the roadmap.
+A desktop companion app, able to start the downloads of the same catalog's apps from the commands shown on each app page, is planned as the next step — see the in-app **Companion** page for the roadmap.
 
 ---
 
@@ -33,9 +33,9 @@ A dedicated cross-platform CLI, able to install the same catalog's apps and cont
 |---|---|
 | **Home** | Hero search and illustration — the catalog artwork (`CatalogTower`) is inlined and animated here: each building block of the drawing slides/fades into place in sequence, then the rain-thread beams and the glowing box lids keep a soft idle pulse; below it, a "What nxget is" section — a `DownloadFlow` diagram (remote registry → portal → download) beside a short paragraph linking to the "Why nxget" page for the details; then a "Featured" grid (5 to 8 smaller cards, a category-tinted border and platform icons that the regular catalog cards don't have) prioritizing whichever apps the registry's last two commits touched, topped up with other catalog apps to a minimum of five |
 | **Apps** | Full catalog in a wide grid (up to 5 cards per row on large screens), free-text search, a platform filter (Windows/macOS/Linux) and a category combobox (one color-coded pill per category actually in the catalog, next to the platform filter), with a "Clear filters" pill that appears once any filter or the search box is active and resets all of them at once, with the same animated `CatalogTower` illustration used in the Home hero, fixed to the viewport on the left, partly behind the cards (dimmed to a faint silhouette so it doesn't compete with the grid, and — only on this page — replaying its whole entrance+idle sequence from scratch every 12 seconds instead of playing once). The list is paginated (`PAGE_SIZE` in `AppsView.jsx`, currently 16 apps per page): a dot pager where the current page is an animated oval, with an animated "Page X of Y" label below, shown only when there is more than one page. Search, both filters and current page are kept in memory while you open an app and come back (scroll position included), but not across a browser reload |
-| **App detail** | Per-app page with download buttons resolved from the registry (one per platform *and* architecture when both exist), an "Information" card (extended bilingual description, publisher, current version, category/platform pills, app id) and, on wide screens next to it, a "Version history" card (up to 10 recent releases, read from the registry's `v1/releases.json`; only for apps with a `repo`). The current version comes from the latest release when the manifest has a `repo`, otherwise from the manifest's own `version` (with per-file overrides listed underneath when a platform differs). Also: compact related-apps cards from the same category, "View on GitHub" / "Visit website" links when available, and a `nxget install <id>` command box (CLI not out yet). A **License** button opens the software's license text, fetched from GitHub, and only appears when a license was actually retrieved. Apps in the `vlT Software` category (or marked `access: voucher`) show a disclaimer and locked download buttons until a valid download voucher is entered |
-| **Why nxget** | Value-proposition grid (cross-platform, hand-picked, official sources, open catalog, always up to date, CLI coming soon), a "How it works" walkthrough from the registry to the download button, and a "Details that matter" section of six icon cards (app details and version history, license button, search and platform filter, similar apps, official site/repo links, language and theme) |
-| **CLI** | Roadmap page for the planned command-line client: what `install` / `update` will do, a preview of the planned commands, a "Why a CLI" section, how it will reuse the same registry and release resolution as the portal, and a status board (registry and portal available, CLI planned) |
+| **App detail** | Per-app page with download buttons resolved from the registry (one per platform *and* architecture when both exist), an "Information" card (extended bilingual description, publisher, current version, category/platform pills, app id) and, on wide screens next to it, a "Version history" card (up to 10 recent releases, read from the registry's `v1/releases.json`; only for apps with a `repo`). The current version comes from the latest release when the manifest has a `repo`, otherwise from the manifest's own `version` (with per-file overrides listed underneath when a platform differs). Also: compact related-apps cards from the same category, "View on GitHub" / "Visit website" links when available, and a `nxget install <id>` command box (for the planned companion app, not out yet). A **License** button opens the software's license text, fetched from GitHub, and only appears when a license was actually retrieved. Apps whose manifest says `access: voucher` show a disclaimer and locked download buttons until a valid download voucher is entered |
+| **Why nxget** | Value-proposition grid (cross-platform, hand-picked, official sources, open catalog, always up to date, desktop companion coming soon), a "How it works" walkthrough from the registry to the download button, and a "Details that matter" section (app details and version history, license button, search and platform filter, similar apps, official site/repo links, language and theme), laid out as a numbered document with two columns, in the style of a legal-notes page |
+| **Companion** | Roadmap page for the planned desktop companion app: how it will run the commands shown on app pages to start downloads, an illustrative window preview, a "Why a companion" section, how it will reuse the same registry and release resolution as the portal, and a status board (registry and portal available, companion planned). Same numbered document layout as "Why nxget" |
 | **About** | Project origin story (bilingual, loaded from an external text file), with a credit link to Keivan Beigi's blog, an "INFO" pill that opens the same version/build/stack modal as the footer, and a brand card above the pills with the animated vlT logo (a link to lorenzoveronesi.it) and the copyright line (the animation starts when the card scrolls into view) |
 
 ### Interface
@@ -52,7 +52,7 @@ A dedicated cross-platform CLI, able to install the same catalog's apps and cont
 
 ## Data & Downloads — how a catalog entry works
 
-The catalog is **not** part of this repo. It's published by [`nxget.packages`](https://github.com/vlT-vl/nxget.packages) (branch `api`), a separate public registry with one hand-written YAML manifest per app — this is the single source of truth shared by every consumer (this portal today, a future `nxget.cli` later):
+The catalog is **not** part of this repo. It's published by [`nxget.packages`](https://github.com/vlT-vl/nxget.packages) (branch `api`), a separate public registry with one hand-written YAML manifest per app — this is the single source of truth shared by every consumer (this portal today, the future desktop companion app):
 
 ```yaml
 id: keepassxc
@@ -115,7 +115,7 @@ Apps resolved via `match` need a GitHub repository that actually publishes insta
 
 ## Restricted apps — voucher & license
 
-First-party apps in the `vlT Software` category are distributed **only by the owner's permission**: their download buttons are locked until a valid voucher is entered (the category, or `access: voucher` in the manifest, is what locks them). Version and version history stay visible. There is no backend, no login and no sign-up: the visitor requests access from the app's detail page, the owner approves it offline, and the visitor pastes the voucher they receive back to unlock the downloads for a limited, owner-chosen amount of time. When it expires the downloads lock again and a new voucher is required.
+Apps whose manifest says `access: voucher` are distributed **only by the owner's permission**: their download buttons are locked until a valid voucher is entered. The portal decides nothing on its own: only that manifest field locks an app, never its category or publisher. Version and version history stay visible. There is no backend, no login and no sign-up: the visitor requests access from the app's detail page, the owner approves it offline, and the visitor pastes the voucher they receive back to unlock the downloads for a limited, owner-chosen amount of time. When it expires the downloads lock again and a new voucher is required.
 
 **Security.** A voucher can't be forged by anyone who only has the public site, including every voucher ever issued — approving one requires a private credential that never leaves the owner's machine.
 
@@ -140,7 +140,7 @@ nxget-app-portal/
     │   ├── App.jsx                 # view router (state machine) + footer
     │   ├── DataContext.jsx         # single data-fetching component: nxget.packages catalog + v1/releases.json
     │   ├── Navbar.jsx / Theme.jsx / LanguageToggle.jsx
-    │   ├── HomeView.jsx / Hero.jsx / DownloadFlow.jsx / CatalogTower.jsx / FeaturesView.jsx / CliView.jsx
+    │   ├── HomeView.jsx / Hero.jsx / DownloadFlow.jsx / CatalogTower.jsx / FeaturesView.jsx / CliView.jsx / DocPage.jsx
     │   ├── AppsView.jsx / AppCard.jsx
     │   ├── AppDetailView.jsx / AppDownloadCard.jsx
     │   ├── VoucherPanel.jsx / LicenseModal.jsx
@@ -148,7 +148,7 @@ nxget-app-portal/
     │   └── NxgetLogo.jsx / VltLogo.jsx
     ├── lib/
     │   ├── uiText.js               # IT/EN dictionary + LanguageProvider/useLang
-    │   ├── access.js               # which apps are voucher-gated (`vlT Software` category or `access: voucher`)
+    │   ├── access.js               # which apps are voucher-gated (only `access: voucher` in the manifest)
     │   ├── appText.js              # localized card preview text from a manifest's description/about
     │   ├── tagColor.js             # shared hash-to-hue formula for category pill / logo fallback colors
     │   ├── voucher.js              # download-voucher verification
@@ -167,15 +167,15 @@ nxget-app-portal/
 
 | Package | Version | Purpose |
 |---|---|---|
-| `react` | ^19.3.0 | UI framework |
-| `react-dom` | ^19.3.0 | DOM renderer |
+| `react` | ^19.3.1 | UI framework |
+| `react-dom` | ^19.3.1 | DOM renderer |
 | `react-icons` | ^5.7.0 | Icon library |
-| `js-yaml` | ^5.4.3 | Parses the YAML manifests fetched at runtime from `nxget.packages` |
+| `js-yaml` | ^5.5.0 | Parses the YAML manifests fetched at runtime from `nxget.packages` |
 
 | Dev | Version | Purpose |
 |---|---|---|
-| `vite` | ^8.3.4 | Build tool + dev server |
-| `@vitejs/plugin-react` | ^6.1.2 | React Fast Refresh + JSX |
+| `vite` | ^8.3.8 | Build tool + dev server |
+| `@vitejs/plugin-react` | ^6.3.0 | React Fast Refresh + JSX |
 
 ---
 
@@ -212,9 +212,9 @@ The repo has no committed `package-lock.json` yet, so the workflow runs a plain 
 
 | Field | Value |
 |---|---|
-| Version | 0.1.2 |
-| Build | R131026 |
-| Updated | 13 October 2026 |
+| Version | 0.1.3 |
+| Build | R251126 |
+| Updated | 25 November 2026 |
 
 ---
 
